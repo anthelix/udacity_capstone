@@ -127,3 +127,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+work/01_simple_script.py work/02_pyspark_job.py work/03_load_sql.py work/04_notebook.ipynb work/05_notebook.ipynb work/bakery.sql work/bootstrap_jupyter.sh work/BreadBasket_DMS.csv work/log4j.properties work/output work/postgresql-42.2.10.jar work/requirements.txt work/spark-warehouse
