@@ -40,7 +40,9 @@ ou transmises à un autre système pour un traitement ultérieur.
 8. `docker exec -it $(docker ps | grep pyspark_pyspark | awk '{print $NF}') pip install psycopg2-binary`
 9. Retrieve the token to log into Jupyter: `docker logs $(docker ps | grep pyspark_pyspark | awk '{print $NF}')`
 
-
+Adminer should be available on localhost port 8080.
+The password credentials are available in the stack.yml file. 
+The server name, postgres, is the name of the PostgreSQL container. This is the domain name the Jupyter container will use to communicate with the PostgreSQL container.
 
 ## Demo
 
