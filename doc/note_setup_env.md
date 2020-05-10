@@ -26,7 +26,7 @@ ou transmises à un autre système pour un traitement ultérieur.
 2. Go to the wordir folder
     `cd Capstone`
 
-3. Create ./data/postgres` directory for PostgreSQL files: `mkdir -p ./data/postgres`
+3. Create ./data/postgres` directory for PostgreSQL files: `mkdir -p ./data/postgres` --> Makefile do this.
 
 4. Optional, pull docker images first:
 
@@ -43,6 +43,12 @@ ou transmises à un autre système pour un traitement ultérieur.
 Adminer should be available on localhost port 8080.
 The password credentials are available in the stack.yml file. 
 The server name, postgres, is the name of the PostgreSQL container. This is the domain name the Jupyter container will use to communicate with the PostgreSQL container.
+
+	@echo system: postgresSQL
+	@echo serveur:postgres
+	@echo utilisateur:postgres
+	@echo mdp:postgres1234
+	@echo click authentifications
 
 ## Demo
 
