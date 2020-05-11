@@ -1,5 +1,16 @@
 Projet Capstone d'ingénierie des données
 
+[STEP I](#STEP-I)  
+* find Topic
+* find main dataset
+* find optionnal dataset
+
+[STEP II](#STEP-II)
+* explore dataset
+
+
+___
+
 L'objectif du projet Data Engineering Capstone est de vous donner la possibilité de combiner ce que vous avez appris tout au long du programme. Ce projet constituera une partie importante de votre portfolio qui vous aidera à atteindre vos objectifs de carrière en matière d'ingénierie des données.
 
 Dans le cadre de ce projet, vous pouvez choisir de mener à bien le projet qui vous est proposé, ou de définir la portée et les données d'un projet de votre propre conception. Dans les deux cas, vous devrez suivre les mêmes étapes que celles décrites ci-dessous.
@@ -46,4 +57,40 @@ Pour vous aider à orienter votre projet, nous l'avons décomposé en une série
 
 Rubrique
 Dans la rubrique "Projet", vous trouverez plus de détails sur les exigences. Utilisez la rubrique pour évaluer votre propre projet avant de le soumettre à Udacity pour examen. Comme pour les autres projets, les examinateurs d'Udacity utiliseront cette rubrique pour évaluer votre projet et vous fournir un retour d'information. Si votre projet ne répond pas aux spécifications, vous pouvez y apporter des modifications et le soumettre à nouveau.
+
+# STEP I
+FIND THE DATASET
+
+---
+### main dataset
+
+* I-94: immigration_data_sample.csv
+    * telecharge: oui.
+    * date de debut, date de fin? Quelle periode?
+    * combien de ligne
+    * describe?
+* gedelt project:
+    * telecharge: non, voir sur AWS
+    * date de debut
+    * quelles colonne? 
+    * exploration?
+
+### optionnal dataset provide by Udacity
+* sas_data: snappy-parquet
+* airport-codes_csv.csv
+* us-cities-demographics.csv
+* I94_SAS_LAbels_Descriptions
+
+
+
+## STEP II
+EXPLORE DATASETS
+
+---
+* With a Jupyter notebook, pandas and spark.
+    * Explore with spark and notebook gdelt, but always the same error within Docker or not. I didn't found the why. Next step, 
+        - airflow and spark? 
+        - ec2 and notebook and s3? I have credits from AWS to do that. 
+
+
 
