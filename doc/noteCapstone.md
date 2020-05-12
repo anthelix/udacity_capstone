@@ -89,8 +89,9 @@ EXPLORE DATASETS
 ---
 * With a Jupyter notebook, pandas and spark.
     * Explore with spark and notebook gdelt, but always the same error within Docker or not. I didn't found the why. Next step, 
-        - airflow and spark? 
-        - ec2 and notebook and s3? I have credits from AWS to do that. 
-
+        - airflow and spark? --> nope
+        - ec2 and notebook and s3? I have credits from AWS to do that. --> nope
+    * jupyetr notebook et script python dans un 1er temps. Rajout sur airflow ensuite?
+    
 
 
