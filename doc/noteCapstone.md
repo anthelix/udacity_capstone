@@ -74,12 +74,17 @@ FIND THE DATASET
     * date de debut
     * quelles colonne? 
     * exploration?
-
+`==> peut etre plus tard, enorme meme pour spark sur mon laptop.
 ### optionnal dataset provide by Udacity
-* sas_data: snappy-parquet
-* airport-codes_csv.csv
-* us-cities-demographics.csv
-* I94_SAS_LAbels_Descriptions
+> les datasets suivants seront la base du projet:
+
+* sas_data: snappy-parquet      ==> information sur les arrivees
+* airport-codes_csv.csv         ==> code aeroport
+* us-cities-demographics.csv    ==> demographie des US
+* I94_SAS_LAbels_Descriptions   ==> labesl des collnes de sas_data
+* temperature                   ==> temperature aux us
+
+
 
 
 
