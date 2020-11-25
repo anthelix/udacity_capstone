@@ -1,5 +1,21 @@
 #### Udacity Nanodegree
 
+Create `$PWD/data/postgres` directory for PostgreSQL files: `mkdir -p ~/data/postgres`
+Optional, for local development, install Python packages: `python3 -m pip install -r requirements.txt`
+Optional, pull docker images first:
+
+    ```bash
+    docker pull jupyter/all-spark-notebook:latest
+    docker pull postgres:12-alpine
+    dock pull adminer:latest
+
+Deploy Docker Stack: `docker stack deploy -c stack.yml jupyter`
+Retrieve the token to log into Jupyter: `docker logs $(docker ps | grep jupyter_spark | awk '{print $NF}')`
+From the Jupyter terminal, run the install script: `sh bootstrap_jupyter.sh
+    ```
+
+
+
 # udacity_capstone
 
 The purpose of this project is to study the foreign students. The goal is to offer Data teams Analysts a selection of data concerning immigration to the United States.
