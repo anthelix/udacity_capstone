@@ -15,6 +15,7 @@ import datetime as dt
 import pandas as pd
 import configparser
 import sys
+import os
 import re
 
 from parse_file1 import parse_file
@@ -64,8 +65,10 @@ def create_parquet_label(input_data):
         file = 'I94_SAS_Labels_Descriptions.SAS'
         ## make i94port.parquet
         key = "i94port"
+        print("GO TO PARSE FILE")
         nb = parse_file(input_data, file, key)
         print(f'There are {nb} rows in {key}.parquet')
+        
         ## make i94visa.csv
         key = "i94visa"
         nb = parse_file(input_data, file, key)
@@ -422,17 +425,17 @@ def clean_indicator_dev(df_indicator_dev):
 
 def main():
     # input_data = "s3a://udacity-dend/"            # Data from Udacity
-    input_data = "../../data/"                               # Run locally
+    input_data = "../data/"                               # Run locally
 
     # output_data = "s3a://dend-paris/sparkify/"    # Anthelix bucket(me)
     # output-data = "s3a://<YOUR_BUCKET>/"          # Visitor bucket
-    output_data = "../../output/"                     # Run localy
-    output_parquet = "../../output/"
+    output_data = "../output/"                     # Run localy
+    output_parquet = "../output/"
     # Create a SparkSession
     spark = create_spark_session()
     print("... SparkSesson created is done...")
 
-    # Create parquet files from I94 Description Labels.
+    # Create parquet files from I94 Description Labels.    
     create_parquet_label(input_data)
     print(' ')
     print('***** Make i94 labels files is done')
@@ -444,9 +447,6 @@ def main():
     # Todo: make a class with this stuff
     df_immigration, df_temperature, df_airport_code, df_global_airports, df_iso_country, df_demograph, df_indicator_dev  = read_sas_csv(input_data, spark)
     
-    #file = 'wikipedia-iso-country-codes.csv'
-    #df_iso_country = load_iso_country(spark, input_data, file)
-    print('***** All Dataframe are ready!')
     i94_mode, i94_ctry, i94_addr, i94_visa, i94_port = read_labels_to_df(input_data)
     print('***** All Dataframe are ready!')
 
