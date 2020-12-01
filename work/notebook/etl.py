@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+#modif dans le docker deouis jupyter de etl.py 11:43
+
 from pyspark.sql import types as T
 from pyspark.sql.functions import *
 from pyspark.sql import SparkSession, SQLContext
@@ -16,7 +18,7 @@ import sys
 import re
 
 from parse_file1 import parse_file
-from read_file1 import read_csv, read_csv_schema, read_sas, read_labels_to_df
+from read_file1 import read_csv, read_csv_global_airports, read_csv_iso_country, read_sas, read_labels_to_df
 from process_tables import create_usairport_table, create_country_table, create_indicator_table, \
     create_demography_table, create_fact_student_table
 
@@ -86,31 +88,38 @@ def create_parquet_label(input_data):
 
 def read_sas_csv(input_data, spark):
     """
-    This function read sas file and csv, with functions in raed_file1.py
+    This function read sas file and csv, with functions in read_file1.py
     return dataframe
     """
     try:
         # df_immigration
+        print('_____df_imigration____')
         cols = ['cicid','i94yr','i94mon','i94cit','i94res','i94port','i94mode', 'i94addr','i94bir','i94visa','dtadfile', 'gender','airline','visatype']
         file = '18-83510-I94-Data-2016/i94_apr16_sub.sas7bdat'
         # todo :refaire avec S3 et tous les fichiers (get_path_sas_folder parquet file)
         df_immigration = read_sas(spark, input_data, file, cols)
+        
         # df_temperature
+        print('_____df_temperature____')
         cols = ['AverageTemperature', 'City', 'Country']
         file = 'GlobalLandTemperaturesByCity.csv'
         delimiter = ','
         df_temperature = read_csv(spark, input_data, file, cols, delimiter)
+        
         # df_airport_code
+        print('_____df_airport_code____')
         file = 'airport-codes_csv.csv'
         cols = ['ident', 'type','name', 'iso_country', 'iso_region', 'municipality', 'iata_code', 'local_code']
         delimiter= ','
         df_airport_code = read_csv(spark, input_data, file, cols, delimiter)
+        
         # df_global_airports
+        print('_____df_global_airports____')
         file = 'airports-extended.csv'
         cols = ['airport_ID','type','name', 'city', 'country', 'iata']
         delimiter = ','
-        header = False
-        global_airports_schema = T.StructType([
+        #header = False
+        schema = T.StructType([
             T.StructField('airport_ID', T.IntegerType(), False),
             T.StructField('name', T.StringType(), False),
             T.StructField('city', T.StringType(), False),
@@ -126,24 +135,38 @@ def read_sas_csv(input_data, spark):
             T.StructField('type', T.StringType(), False),
             T.StructField('data_source', T.StringType(), False)
             ])
-        df_global_airports = read_csv_schema(spark, input_data, file, cols, delimiter, header, schema = global_airports_schema )
+        df_global_airports = read_csv_global_airports(spark, input_data, file, cols, delimiter, schema, header=False )
+        
         # df_iso_country
-        #file = 'wikipedia-iso-country-codes.csv'
+        print('_____df_iso_country____')
+        file = 'wikipedia-iso-country-codes.csv'
         #cols = ['Country', 'Alpha_2','Alpha_3', 'Num_code', 'ISO_3166-2']
         #delimiter =','
-        #df_iso_country  = read_csv(spark, input_data, file, cols, delimiter)
+        file = 'wikipedia-iso-country-codes.csv'
+        schema = T.StructType([
+                    T.StructField('English short name lower case', T.StringType(), False),
+                    T.StructField('Alpha-2 code', T.StringType(), False),
+                    T.StructField('Alpha-3 code', T.StringType(), False),
+                    T.StructField('Numeric code', T.StringType(), False),
+                    T.StructField('ISO_3166-2', T.StringType(), True),    
+                  ]) 
+        df_iso_country  = read_csv_iso_country(spark, input_data, file, schema)
+        
         # df_demograph
+        print('_____df_demograph____')
         file = 'us-cities-demographics.csv'
         cols = ['City', 'State', 'Median Age', 'Male Population', 'Female Population', 'Total Population', 'Number of Veterans', 'Foreign-born', 'Average Household Size', 'State Code', 'Race', 'Count']
         delimiter = ';'
         df_demograph  = read_csv(spark, input_data, file, cols, delimiter)
+        
         # df_indicator_dev
+        print('_____df_indicator_dev____')
         file = 'WDIData.csv'
         delimiter = ','
         header =  False
         cols = ['Country Name', 'Country Code', 'Indicator Name', 'Indicator Code', '2015']
-        df_indicator_dev  = read_csv_schema(spark, input_data, file, cols, delimiter, header, schema=False)
-        return(df_immigration, df_temperature, df_airport_code, df_global_airports, df_demograph, df_indicator_dev)
+        df_indicator_dev  = read_csv(spark, input_data, file, cols, delimiter)
+        return(df_immigration, df_temperature, df_airport_code, df_global_airports, df_iso_country, df_demograph, df_indicator_dev)
     except Exception as e:
         print("Unexpected error: %s" % e)
 
@@ -210,28 +233,7 @@ def clean_immigration(df_immigration, i94_port):
     except Exception as e:
         print("Unexpected error: %s" % e)
 
-def load_iso_country(spark, path, file):
-    iso_country_schema = T.StructType([
-        T.StructField('Country', T.StringType(), False),
-        T.StructField('Alpha_2', T.StringType(), False),
-        T.StructField('Alpha_3', T.StringType(), False),
-        T.StructField('Num_code', T.StringType(), False),
-        T.StructField('ISO_3166-2', T.StringType(), True),    
-])
-    df = spark.read \
-        .format("csv") \
-        .option('header', 'true') \
-        .option('inferSchema', 'true') \
-        .schema(iso_country_schema) \
-        .load(path+file)
-    nb_rows = df.count()
-    print(f'*****         Loading {nb_rows} rows')
-    print(f'*****         Display the Schema')
-    df.printSchema()
-    print(f'*****         Display few rows')
-    df.show(3, truncate = False)
-    df.collect()
-    return df
+
 
 
 def clean_temperature(df_temperature):
@@ -327,7 +329,10 @@ def clean_iso_country(df_iso_country):
                             .withColumnRenamed('Num_code','country_num'))
 
         df_clean_iso_country =  df_iso_country.drop("ISO_3166-2") \
-                                    .select(F.col("Num_code").alias("country_num") \
+                                    .select(F.col("Country").alias("country_name"), \
+                                        F.col("Alpha_2").alias("country_iso2"), \
+                                        F.col("Alpha_3").alias("country_iso3"), \
+                                        F.col("Num_code").alias("country_num") \
                                     .cast("int")) \
                                     .dropDuplicates()
         print('***** Make df_clean_iso_country processing ')
@@ -335,7 +340,7 @@ def clean_iso_country(df_iso_country):
         df_clean_iso_country.show(2)
         return(df_clean_iso_country)
     except Exception as e:
-        print("Unexpected error: %s" % e)
+        print("Unexpected error: %s" % e) 
 
 def clean_demograph(df_demograph): 
     """
@@ -437,10 +442,10 @@ def main():
 
     # read files and create dataframes
     # Todo: make a class with this stuff
-    df_immigration, df_temperature, df_airport_code, df_global_airports, df_demograph, df_indicator_dev  = read_sas_csv(input_data, spark)
+    df_immigration, df_temperature, df_airport_code, df_global_airports, df_iso_country, df_demograph, df_indicator_dev  = read_sas_csv(input_data, spark)
     
-    file = 'wikipedia-iso-country-codes.csv'
-    df_iso_country = load_iso_country(spark, input_data, file)
+    #file = 'wikipedia-iso-country-codes.csv'
+    #df_iso_country = load_iso_country(spark, input_data, file)
     print('***** All Dataframe are ready!')
     i94_mode, i94_ctry, i94_addr, i94_visa, i94_port = read_labels_to_df(input_data)
     print('***** All Dataframe are ready!')

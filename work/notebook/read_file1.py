@@ -78,14 +78,23 @@ def read_csv_iso_country(spark, path, file, schema):
     """
     print(" ")
     print(f"...Path file is :  {path}{file} is processing...")
-    cols = ['Country', 'Alpha_2','Alpha_3', 'Num_code', 'ISO_3166-2']
+    #cols = ['English short name lower case', 'Alpha-2 code','Alpha-3 code', 'Numeric code', 'ISO_3166-2']
  
     df = spark.read \
         .format("csv") \
         .option('inferSchema', 'true') \
         .schema(schema) \
-        .load(path+file) \
-        .select(cols)
+        .load(path+file) 
+        #.select(cols)
+    print("  ")
+    print("C EST LE SCHEMA JUSTE APRES SPARK READ")
+    df.show(3, truncate = False)
+    
+    df = df.withColumnRenamed("English short name lower case", "Country")\
+           .withColumnRenamed("Alpha-2 code", "Alpha_2")\
+           .withColumnRenamed("Alpha-3 code", "Alpha_3")\
+           .withColumnRenamed("Numeric code", "Num_code")
+    
     nb_rows = df.count()
     print(f'*****         Loading {nb_rows} rows')
     print(f'*****              Display the Schema')
