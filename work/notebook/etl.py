@@ -45,7 +45,7 @@ def create_spark_session():
         spark = SparkSession \
             .builder \
             .appName("Us_student_immigation") \
-            .config("spark.jars.packages","saurfang:spark-sas7bdat:2.0.0-s_2.11") \
+            .config("spark.jars.packages","saurfang:spark-sas7bdat:3.0.0-s_2.12") \
             .enableHiveSupport() \
             .getOrCreate()
         return(spark)

@@ -9,6 +9,7 @@ sudo apt-get install htop
 # install required python packages
 python3 -m pip install --user --upgrade pip
 python3 -m pip install -r requirements.txt --upgrade
+jupyter nbextension enable --py widgetsnbextension --sys-prefix
 
 # download latest postgres driver jar
 POSTGRES_JAR="postgresql-42.2.10.jar"

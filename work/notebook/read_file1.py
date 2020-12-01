@@ -46,9 +46,6 @@ def read_csv(spark, path, file, cols, delimiter):
     df.show(3, truncate = False)
     return df
 
-def test():
-    return 
-
 def read_csv_global_airports(spark, path, file, cols, delimiter,schema, header):
     """
     read csv file with a custom schema
