@@ -428,7 +428,7 @@ def main():
     input_data = "../data/"                               # Run locally
 
     # output_data = "s3a://dend-paris/sparkify/"    # Anthelix bucket(me)
-    # output-data = "s3a://<YOUR_BUCKET>/"          # Visitor bucket
+    # output_data = "s3a://<YOUR_BUCKET>/"          # Visitor bucket
     output_data = "../output/"                     # Run localy
     output_parquet = "../output/"
     # Create a SparkSession
