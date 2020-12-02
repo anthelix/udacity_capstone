@@ -80,7 +80,7 @@ FIND THE DATASET
 
 * sas_data: snappy-parquet      ==> information sur les arrivees
 * airport-codes_csv.csv         ==> code aeroport
-* us-cities-demographics.csv    ==> demographie des US
+* us-cities-demographics.csv    ==> demographie des UScd 
 * I94_SAS_LAbels_Descriptions   ==> labesl des collnes de sas_data
 * temperature                   ==> temperature aux us
 

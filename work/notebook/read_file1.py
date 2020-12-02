@@ -71,23 +71,22 @@ def read_csv_global_airports(spark, path, file, cols, delimiter,schema, header):
     df.show(3, truncate = False)
     return df
 
-def read_csv_iso_country(spark, path, file, schema):
+def read_csv_iso_country(spark, path, file):
     """
-    read csv file with a custom schema
+    read csv file 
     return a dataframe
     """
     print(" ")
     print(f"...Path file is :  {path}{file} is processing...")
     #cols = ['English short name lower case', 'Alpha-2 code','Alpha-3 code', 'Numeric code', 'ISO_3166-2']
- 
+    
+    # *********************************************** remove .schema(schema\ .select(cols)
     df = spark.read \
         .format("csv") \
+        .option('header', 'true') \
         .option('inferSchema', 'true') \
-        .schema(schema) \
         .load(path+file) 
-        #.select(cols)
-    print("  ")
-    print("C EST LE SCHEMA JUSTE APRES SPARK READ")
+        
     df.show(3, truncate = False)
     
     df = df.withColumnRenamed("English short name lower case", "Country")\
