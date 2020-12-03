@@ -90,7 +90,19 @@ tree -CAL 2
 ## How To Do
 
 * I use compress the dataset in  `data.zip` 
-* then  `git lfs track "data.zip"` and `git lfs ls-files ` to upload large file to github
+* then , to upload large file to github
+  * ```
+        git lfs track "*.zip"
+        git add .gitattributes
+        git commit -m "Updated the attributes"
+        git push
+        git add my_large_file.zip
+        git lfs ls-files
+            And here I would ensure that I saw my_large_file.zip being tracked.
+        git commit -m "Now I am adding the large file"
+        git push
+    ```
+
 
 * In a terminal, run `git clone https://github.com/anthelix/udacity_capstone.git <folder>,` 
 * `cd <folder>`
