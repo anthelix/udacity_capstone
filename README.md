@@ -28,14 +28,72 @@ Airports codes |airport-codes_csv.csv| provide by Udacity
 Iso country | wikipedia-iso-country-codes.csv|[Kaggle](https://www.kaggle.com/juanumusic/countries-iso-codes)
 US Cities Demographic| us-cities-demographics.csv|provide by Udacity
 Indicators developpment| WDIData.csv| [Kaggle](https://www.kaggle.com/xavier14/wdidata)
-Education-statistics| EdStatsData.csv|provide by Kaggle [World Bank](https://www.kaggle.com/kostya23/worldbankedstatsunarchived) # Edit: not used
+Education-statistics| EdStatsData.csv|provide by Kaggle [World Bank](https://www.kaggle.com/kostya23/
 
 ## Tools used
 
-I used Python and Spark for ETL. I try the twice to improve my code. I used Pyspark and Pandas libraries
-I run notebooks, python scripts and Spark jobs in a Docker Yarm.
+I used Python and Spark for ETL. I try the twice to improve my code. I used Pyspark and Pandas libraries. 
+I run notebooks, python scripts and Spark jobs in a Docker Yarm. `git lfs track "*.tar.gz"` to push on GitHub large files.
+
+## Folder structure
+
+tree -CAL 2
+.
+├── data
+│   ├── 18-83510-I94-Data-2016
+│   ├── airport-codes_csv.csv
+│   ├── airports-extended.csv
+│   ├── airports_us.csv
+│   ├── dataset.tar.gz
+│   ├── GlobalLandTemperaturesByCity.csv
+│   ├── I94_SAS_Labels_Descriptions.SAS
+│   ├── immigration_data_sample.csv
+│   ├── postgres
+│   ├── us-cities-demographics.csv
+│   ├── WDIData.csv
+│   └── wikipedia-iso-country-codes.csv
+├── dl.cfg
+├── docker_nbextensions
+│   ├── Dockerfile
+│   └── docker.txt
+├── output
+│   ├── country.parquet
+│   ├── demograph.parquet
+│   ├── fact_student.parquet
+│   ├── indicator.parquet
+│   ├── us_airport.parquet
+├── README.md
+├── stack.yml
+└── work
+    ├── bootstrap_jupyter.sh
+    ├── log4j.properties
+    ├── Makefile
+    ├── notebook
+    │   ├── 0_Take_a_look_dataset.ipynb
+    │   ├── 1_Exploration_python.ipynb
+    │   ├── 2_Data_dictionnary.ipynb
+    │   ├── 3_Explanation_capstone_project.ipynb
+    │   ├── 4_Create_etl_work_process.ipynb
+    │   ├── 5_create_etl_workinCopy.ipynb
+    │   ├── etl.py
+    │   ├── parse_file1.py
+    │   ├── postgresql-42.2.10.jar
+    │   ├── process_tables.py
+    │   ├── read_file1.py
+    ├── postgresql-42.2.10.jar
+    └── requirements.txt
+
+
+
+
 
 ## How To Do
+
+* In a terminal, run `git clone 
+
+* I use this command to compress the dataset : `tar -czvf dataset.tar.gz ./somefiles`
+  * In $PWD, run `tar -xzvf dataset.tar.gz -C / data` to unzip the file
+
 
 * Create `$PWD/data/postgres` directory for PostgreSQL files: `mkdir -p ~/data/postgres`
 * Optional, for local development, install Python packages: `python3 -m pip install -r requirements.txt`
@@ -51,7 +109,7 @@ Optional, pull docker images first:
 * Retrieve the token to log into Jupyter: `docker logs $(docker ps | grep jupyter_spark | awk '{print $NF}')`
 * From the Jupyter terminal, run the install script: `Make install` == > sh bootstrap_jupyter.sh 
 * then `Make etl` ==> python3 etl.py
-* At the end, `docker stack rm stack.yml jupyter`
+* At the end, `docker stack rm stack.yml jupyter`, `docker swarm leave --force`, `docker rmi -f $(docker images -qa)`, `docker system prune --volumes`, `sudo docker images`
 
 ## ETL process
 
@@ -164,7 +222,7 @@ Optional, pull docker images first:
     write_parquet(dim_country, parquet_path)
     return(dim_country)
     ```
-    
+
     ```
         +--------------+------------+------------+-----------+---------------+
     |  country_name|country_iso2|country_iso3|country_num|avg_temperature|
