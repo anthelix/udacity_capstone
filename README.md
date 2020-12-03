@@ -33,7 +33,7 @@ Education-statistics| EdStatsData.csv|provide by Kaggle [World Bank](https://www
 ## Tools used
 
 I used Python and Spark for ETL. I try the twice to improve my code. I used Pyspark and Pandas libraries. 
-I run notebooks, python scripts and Spark jobs in a Docker Yarm. `git lfs track "*.tar.gz"` to push on GitHub large files.
+I run notebooks, python scripts and Spark jobs in a Docker Yarm. `git lfs track "dataset.tar.gz"` to push on GitHub large files.
 
 ## Folder structure
 
@@ -89,13 +89,15 @@ tree -CAL 2
 
 ## How To Do
 
-* In a terminal, run `git clone 
+* In a terminal, run `git clone https://github.com/anthelix/udacity_capstone.git <folder>,` 
+* `cd folder`
+* Create `folder/data/postgres` directory for PostgreSQL files: `mkdir -p ./data/postgres`
 
-* I use this command to compress the dataset : `tar -czvf dataset.tar.gz ./somefiles`
-  * In $PWD, run `tar -xzvf dataset.tar.gz -C / data` to unzip the file
+* I use this command to compress the dataset : `tar -czvf data.tar.gz data/`
+  * In `folder`, run `tar -xzvf data.tar.gz -C / data` to unzip the file
 
 
-* Create `$PWD/data/postgres` directory for PostgreSQL files: `mkdir -p ~/data/postgres`
+
 * Optional, for local development, install Python packages: `python3 -m pip install -r requirements.txt`
 Optional, pull docker images first:
 
