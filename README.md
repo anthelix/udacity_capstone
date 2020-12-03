@@ -89,15 +89,15 @@ tree -CAL 2
 
 ## How To Do
 
-* I use this command to compress the dataset : `tar -zcvf data.tar.gz data/` 
-* then  `git lfs track "data.tar.gz"` and `git lfs ls-files ` to upload large file to github
+* I use compress the dataset in  `data.zip` 
+* then  `git lfs track "data.zip"` and `git lfs ls-files ` to upload large file to github
 
 * In a terminal, run `git clone https://github.com/anthelix/udacity_capstone.git <folder>,` 
-* `cd folder`
-* Create `folder/data/postgres` directory for PostgreSQL files: `mkdir -p ./data/postgres`
+* `cd <folder>`
+* Create `<folder>/data/postgres` directory for PostgreSQL files: `mkdir -p ./data/postgres`
 
 
-  * In `folder`, run `tar -xzvf data.tar.gz -C / data` to unzip the file
+  * In `folder`, unzip the file `data.zip` in a folder `data`
 
 
 
