@@ -89,6 +89,8 @@ tree -CAL 2
 
 ## How To Do
 
+I used Docker. You can run the etl.py and jupyter notebook. 
+
 * I use compress the dataset in  `data.zip` 
 * then , to upload large file to github
   * ```
@@ -106,25 +108,20 @@ tree -CAL 2
 
 * In a terminal, run `git clone https://github.com/anthelix/udacity_capstone.git <folder>,` 
 * `cd <folder>`
+* Unzip `data.zip` : It's make a folder `data` in `<folder>`
 * Create `<folder>/data/postgres` directory for PostgreSQL files: `mkdir -p ./data/postgres`
-
-
-  * In `folder`, unzip the file `data.zip` in a folder `data`
-
-
-
-* Optional, for local development, install Python packages: `python3 -m pip install -r requirements.txt`
-Optional, pull docker images first:
-
-    ```bash
+* in `<folder>`:
+  * Optional, for local development, install Python packages: `python3 -m pip install -r requirements.txt`
+  * pull docker images first:
+    ```
     docker pull jupyter/all-spark-notebook:latest
     docker pull postgres:12-alpine
     dock pull adminer:latest
     ```
-
-* Deploy Docker Stack: `docker stack deploy -c stack.yml jupyter`
-* Retrieve the token to log into Jupyter: `docker logs $(docker ps | grep jupyter_spark | awk '{print $NF}')`
-* From the Jupyter terminal, run the install script: `Make install` == > sh bootstrap_jupyter.sh 
+  * Deploy Docker Stack: `docker stack deploy -c stack.yml jupyter`
+  * Retrieve the token to log into Jupyter: `docker logs $(docker ps | grep jupyter_spark | awk '{print $NF}')`
+    * ctrl + clic on "http://127. ..."
+* From the Jupyter terminal, run the install script: `Make install` == > sh bootstrap_jupyter.sh (in jupyter Home , at the right, click button `new`, then terminal)
 * then `Make etl` ==> python3 etl.py
 * At the end, `docker stack rm stack.yml jupyter`, `docker swarm leave --force`, `docker rmi -f $(docker images -qa)`, `docker system prune --volumes`, `sudo docker images`
 
