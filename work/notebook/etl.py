@@ -145,15 +145,8 @@ def read_sas_csv(input_data, spark):
         file = 'wikipedia-iso-country-codes.csv'
         #cols = ['Country', 'Alpha_2','Alpha_3', 'Num_code', 'ISO_3166-2']
         #delimiter =','
-        file = 'wikipedia-iso-country-codes.csv'
-        schema = T.StructType([
-                    T.StructField('English short name lower case', T.StringType(), False),
-                    T.StructField('Alpha-2 code', T.StringType(), False),
-                    T.StructField('Alpha-3 code', T.StringType(), False),
-                    T.StructField('Numeric code', T.StringType(), False),
-                    T.StructField('ISO_3166-2', T.StringType(), True),    
-                  ]) 
-        df_iso_country  = read_csv_iso_country(spark, input_data, file, schema)
+        file = 'wikipedia-iso-country-codes.csv' 
+        df_iso_country  = read_csv_iso_country(spark, input_data, file)
         
         # df_demograph
         print('_____df_demograph____')

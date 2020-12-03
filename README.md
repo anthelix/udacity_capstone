@@ -1,20 +1,5 @@
 #### Udacity Nanodegree
 
-Create `$PWD/data/postgres` directory for PostgreSQL files: `mkdir -p ~/data/postgres`
-Optional, for local development, install Python packages: `python3 -m pip install -r requirements.txt`
-Optional, pull docker images first:
-
-    ```bash
-    docker pull jupyter/all-spark-notebook:latest
-    docker pull postgres:12-alpine
-    dock pull adminer:latest
-
-Deploy Docker Stack: `docker stack deploy -c stack.yml jupyter`
-Retrieve the token to log into Jupyter: `docker logs $(docker ps | grep jupyter_spark | awk '{print $NF}')`
-From the Jupyter terminal, run the install script: `Make install` == > sh bootstrap_jupyter.sh, then `Make etl` ==> python3 etl.py
-
-
-
 # udacity_capstone
 
 The purpose of this project is to study the foreign students. The goal is to offer Data teams Analysts a selection of data concerning immigration to the United States.
@@ -31,7 +16,7 @@ I'll look at the `[US National Tourism and Trade Office](https://travel.trade.go
 The GDELT Project, [here](https://www.gdeltproject.org/), monitors the news around our world. 
 These will form the base of my project. I need to add more information. 
 
-#### Data Source
+## Data Source
 
 Data |File |Data Source
 -|-|-|
@@ -45,13 +30,30 @@ US Cities Demographic| us-cities-demographics.csv|provide by Udacity
 Indicators developpment| WDIData.csv| [Kaggle](https://www.kaggle.com/xavier14/wdidata)
 Education-statistics| EdStatsData.csv|provide by Kaggle [World Bank](https://www.kaggle.com/kostya23/worldbankedstatsunarchived) # Edit: not used
 
-#### Tools used
+## Tools used
 
 I used Python and Spark for ETL. I try the twice to improve my code. I used Pyspark and Pandas libraries
 I run notebooks, python scripts and Spark jobs in a Docker Yarm.
 
+## How To Do
 
-#### ETL process
+* Create `$PWD/data/postgres` directory for PostgreSQL files: `mkdir -p ~/data/postgres`
+* Optional, for local development, install Python packages: `python3 -m pip install -r requirements.txt`
+Optional, pull docker images first:
+
+    ```bash
+    docker pull jupyter/all-spark-notebook:latest
+    docker pull postgres:12-alpine
+    dock pull adminer:latest
+    ```
+
+* Deploy Docker Stack: `docker stack deploy -c stack.yml jupyter`
+* Retrieve the token to log into Jupyter: `docker logs $(docker ps | grep jupyter_spark | awk '{print $NF}')`
+* From the Jupyter terminal, run the install script: `Make install` == > sh bootstrap_jupyter.sh 
+* then `Make etl` ==> python3 etl.py
+* At the end, `docker stack rm stack.yml jupyter`
+
+## ETL process
 
 * Load the files
   * Load the files. The files are '.sas7bdat', '.csv', and '.parquet'
@@ -122,25 +124,25 @@ I run notebooks, python scripts and Spark jobs in a Docker Yarm.
         df_clean_global_airports.show(2)
         return(df_clean_global_airports)
     ```
+
     ```
-    ***** Make df_clean_global_airports processing 
-root
- |-- airport_id: integer (nullable = true)
- |-- airport_name: string (nullable = true)
- |-- city_name: string (nullable = true)
- |-- country_name: string (nullable = true)
- |-- iata_code: string (nullable = true)
+        ***** Make df_clean_global_airports processing 
+    root
+    |-- airport_id: integer (nullable = true)
+    |-- airport_name: string (nullable = true)
+    |-- city_name: string (nullable = true)
+    |-- country_name: string (nullable = true)
+    |-- iata_code: string (nullable = true)
 
-+----------+--------------------+---------+------------+---------+
-|airport_id|        airport_name|city_name|country_name|iata_code|
-+----------+--------------------+---------+------------+---------+
-|       263|Margaret Ekpo Int...|  Calabar|     Nigeria|      CBQ|
-|       428|       Ivalo Airport|    Ivalo|     Finland|      IVL|
-+----------+--------------------+---------+------------+---------+
-only showing top 2 rows
+    +----------+--------------------+---------+------------+---------+
+    |airport_id|        airport_name|city_name|country_name|iata_code|
+    +----------+--------------------+---------+------------+---------+
+    |       263|Margaret Ekpo Int...|  Calabar|     Nigeria|      CBQ|
+    |       428|       Ivalo Airport|    Ivalo|     Finland|      IVL|
+    +----------+--------------------+---------+------------+---------+
+    only showing top 2 rows
 
-```
-
+    ```
 
 * Create Dimensions anf fact tables
     * 
@@ -162,6 +164,7 @@ only showing top 2 rows
     write_parquet(dim_country, parquet_path)
     return(dim_country)
     ```
+    
     ```
         +--------------+------------+------------+-----------+---------------+
     |  country_name|country_iso2|country_iso3|country_num|avg_temperature|
@@ -175,7 +178,7 @@ only showing top 2 rows
     only showing top 5 rows
     ```
 
-    
+
 
 
 
