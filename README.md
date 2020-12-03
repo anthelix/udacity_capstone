@@ -123,6 +123,7 @@ I used Docker. You can run the etl.py and jupyter notebook.
     * ctrl + clic on "http://127. ..."
 * From the Jupyter terminal, run the install script: `Make install` == > sh bootstrap_jupyter.sh (in jupyter Home , at the right, click button `new`, then terminal)
 * then `Make etl` ==> python3 etl.py
+* A new folder `output` will created with the dimensions and fact table in `<folder>`
 * At the end, `docker stack rm stack.yml jupyter`, `docker swarm leave --force`, `docker rmi -f $(docker images -qa)`, `docker system prune --volumes`, `sudo docker images`
 
 ## ETL process
@@ -130,23 +131,6 @@ I used Docker. You can run the etl.py and jupyter notebook.
 * Load the files
   * Load the files. The files are '.sas7bdat', '.csv', and '.parquet'
   * Function example:
-    ```
-        def load_global_airports(path, file):
-            df = spark.read \
-                .format("csv") \
-                .option('header', 'True') \
-                .option('inferSchema', 'true') \
-                .schema(global_airports_schema) \
-                .load(path+file)
-            nb_rows = df.count()
-            print(f'*****         Loading {nb_rows} rows')
-            print(f'*****         Display the Schema')
-            df.printSchema()
-            print(f'*****         Display few rows')
-            df.show(3, truncate = False)
-            return df, nb_rows
-    ```
-
   * we get those dataframe
 
   ```
@@ -178,25 +162,6 @@ I used Docker. You can run the etl.py and jupyter notebook.
 * Cleasning
   * I kept data useful, rename columns, drop duplicates
   * Function examples:
-  
-    ```
-    def clean_global_airports(df_global_airports):
-        drop_cols = ["icao","type", "latitude", "longitude", "altitude", "timezone", "dst", "tz_timezone", "data_source"]
-        newdf = df_global_airports.filter(df_global_airports.type.isin('airport', 'unknown')) \
-                            .drop(*drop_cols)
-
-        df_clean_global_airports = newdf.select(F.col("airport_ID").alias("airport_id").cast("int"), \
-                                                F.col("name").alias("airport_name"), \
-                                                F.col("city").alias("city_name"), \
-                                                F.col("country").alias("country_name"), \
-                                                F.col("iata").alias("iata_code")) \
-                                        .dropDuplicates()    
-        print('***** Make df_clean_global_airports processing ')
-        df_clean_global_airports.printSchema()
-        df_clean_global_airports.show(2)
-        return(df_clean_global_airports)
-    ```
-
     ```
         ***** Make df_clean_global_airports processing 
     root
@@ -215,28 +180,8 @@ I used Docker. You can run the etl.py and jupyter notebook.
     only showing top 2 rows
 
     ```
-
-* Create Dimensions anf fact tables
-    * 
-    ```
-    def create_country_table(df_clean_iso_country, df_clean_temperature, output_parquet):
-    # create country table
-    # output_parquet = '../../output/'
-    tic = df_clean_iso_country.alias('tic')
-    tt = df_clean_temperature.alias('tt')
-    df_join = tic.join(tt, (tic.country_name == tt.country), how='left')
-    dim_country = df_join \
-                        .filter('country_num != ""' and 'country_iso3 != ""') \
-                        .drop_duplicates(subset = ['country_name']) \
-                        .orderBy('country_name') \
-                        .drop('country')
-    dim_country.show(5)
-    dim_country.collect()
-    parquet_path = output_parquet + 'country.parquet'
-    write_parquet(dim_country, parquet_path)
-    return(dim_country)
-    ```
-
+* Create Dimensions anf fact tables in a new folder `<folder>/ouput`
+    * Example:
     ```
         +--------------+------------+------------+-----------+---------------+
     |  country_name|country_iso2|country_iso3|country_num|avg_temperature|
@@ -250,7 +195,4 @@ I used Docker. You can run the etl.py and jupyter notebook.
     only showing top 5 rows
     ```
 
-
-
-
-
+    
