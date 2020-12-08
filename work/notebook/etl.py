@@ -65,7 +65,6 @@ def create_parquet_label(input_data):
         file = 'I94_SAS_Labels_Descriptions.SAS'
         ## make i94port.parquet
         key = "i94port"
-        print("GO TO PARSE FILE")
         nb = parse_file(input_data, file, key)
         print(f'There are {nb} rows in {key}.parquet')
         

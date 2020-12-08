@@ -1,8 +1,11 @@
 OUTDIR = ../output
+INDIR = ../input
 
 
 install:
 	@sh bootstrap_jupyter.sh
+	@mkdir ../output
+	@mkdir ../input
 
 etl:
 	@python3 ./notebook/etl.py
@@ -10,7 +13,21 @@ etl:
 clean:
 	@if [ -d "${OUTDIR}" ]; then \
 		rm -r ${OUTDIR}; \
+	fi; \
+
+	@if [ -d "${INDIR}" ]; then \
+		rm -r ${INDIR}; \
 	fi \
+
+re:
+	@if [ -d "${OUTDIR}" ]; then \
+		rm -r ${OUTDIR}; \
+	fi; \
+
+	@if [ -d "${INDIR}" ]; then \
+		rm -r ${INDIR}; \
+	fi \
+
 
 
 	
