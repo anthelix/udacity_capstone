@@ -537,6 +537,9 @@ The immigration dataset is the center of this project and allow us to explore fo
 ---
 3.2 Mapping out data pipeline
 # TODO : add schema of table
+# TODO: Revoir la fact table? nettoyage? remplacement des missing value, format?
+# TODO: les scripts clean doivent lire depuis le datalake, depuis input
+# TODO: regarder dans project 4 ou 3, script pour S3 et Redshift, et donc revoir la structure du dossier? est ce que je le fais avec docker?
 
 ```
 ***** create fact_student is processing...
