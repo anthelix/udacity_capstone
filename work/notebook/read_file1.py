@@ -4,11 +4,15 @@ import pandas as pd
 import sys
 import re
 
+from process_tables import write_parquet
+
 def read_sas(spark, path, file, cols):
     """
     read file from '18-83510-I94-Data-2016/i94_apr16_sub.sas7bdat'
-    return numbers of rows and dataframe 'df_immigration'
+    return dataframe 'df_immigration' and make parquet file ./input/i94_apr16
     """ 
+    output_parquet = '../input/'
+    key = 'i94_apr16'
     print(" ")
     print(f"...Path file is :  {path}{file} is processing...")
     df = spark.read \
@@ -23,12 +27,17 @@ def read_sas(spark, path, file, cols):
     df.printSchema()
     print(f'*****         Display few rows')
     df.show(3, truncate = False)
+    parquet_path = output_parquet + key
+    write_parquet(df, parquet_path)
     return df
 
 def read_csv(spark, path, file, cols, delimiter):
     """
-    read csv file and return a dataframe
+    read csv file, return a dataframe
+    Create a csv file ./input/namefile
     """
+    output_parquet = '../input/'
+    key = file.split('.')[0]
     print(" ")
     print(f"...Path file is :  {path}{file} is processing...")
     df = spark.read \
@@ -44,6 +53,8 @@ def read_csv(spark, path, file, cols, delimiter):
     df.printSchema()
     print(f'*****         Display few rows')
     df.show(3, truncate = False)
+    parquet_path = output_parquet + key
+    write_parquet(df, parquet_path)
     return df
 
 def read_csv_global_airports(spark, path, file, cols, delimiter,schema, header):
@@ -51,6 +62,9 @@ def read_csv_global_airports(spark, path, file, cols, delimiter,schema, header):
     read csv file with a custom schema
     return a dataframe
     """
+    output_csv = '../input/'
+    key = file.split('.')[0]
+
     print(" ")
     print(f"...Path file is :  {path}{file} is processing...")
     
@@ -69,6 +83,7 @@ def read_csv_global_airports(spark, path, file, cols, delimiter,schema, header):
     df.printSchema()          
     print(f'*****              Display few rows')
     df.show(3, truncate = False)
+    df.toPandas().to_csv(f'{output_csv}{key}.csv')
     return df
 
 def read_csv_iso_country(spark, path, file):
@@ -76,6 +91,8 @@ def read_csv_iso_country(spark, path, file):
     read csv file 
     return a dataframe
     """
+    output_csv = '../input/'
+    key = file.split('.')[0]
     print(" ")
     print(f"...Path file is :  {path}{file} is processing...")
     #cols = ['English short name lower case', 'Alpha-2 code','Alpha-3 code', 'Numeric code', 'ISO_3166-2']
@@ -100,6 +117,7 @@ def read_csv_iso_country(spark, path, file):
     df.printSchema()          
     print(f'*****              Display few rows')
     df.show(3, truncate = False)
+    df.toPandas().to_csv(f'{output_csv}{key}.csv')
     return df
 
 def read_labels_to_df(input_data):

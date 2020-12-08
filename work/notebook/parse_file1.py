@@ -5,14 +5,13 @@ import sys
 import re
 import os
 
-def parse_file(input_data, file, key):
+def parse_file(path_raw_data, file, key):
     """
     fonction to parse file and create parquet file
     """
    
-    output_parquet = '../data/'
-    path_file = input_data + file
-    
+    output_parquet = '../input/'
+    path_file = path_raw_data + file
 
     #file_parse = 'I94_SAS_Labels_Descriptions.SAS'
     with open(path_file, 'r') as f:
