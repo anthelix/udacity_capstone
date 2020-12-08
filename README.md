@@ -51,7 +51,7 @@ I run notebooks, python scripts and Spark jobs in a **Docker Yarm**.
 ### **Folder structure**
 
 <details>
-  <summary>Click here to see the result of the command TREE of he main folder</summary>
+  <summary>Click here to see the result of the command TREE of the main folder</summary>
 <pre>
 tree -CAL 2
 .  
@@ -100,21 +100,18 @@ tree -CAL 2
     └── requirements.txt  
 </pre>
 </details>
+</br>
 
 ### **To Run**
-I used Docker. You can run the etl.py and jupyter notebook. 
+I used Docker.
 
 * In a terminal, run `git clone https://github.com/anthelix/udacity_capstone.git <folder>,` 
 * `cd <folder>`
 * Unzip `data.zip` : It's make a folder `data` in `<folder>`
-* Create `<folder>/data/postgres` directory for PostgreSQL files: `mkdir -p ./data/postgres`
 * in `<folder>`:
-  * Optional, for local development, install Python packages: `python3 -m pip install -r requirements.txt`
   * pull docker images first:
     ```
     docker pull jupyter/all-spark-notebook:latest
-    docker pull postgres:12-alpine
-    docker pull adminer:latest
     ```
   * Deploy Docker Stack: `docker stack deploy -c stack.yml jupyter`
   * Retrieve the token to log into Jupyter: `docker logs $(docker ps | grep jupyter_spark | awk '{print $NF}')`
@@ -123,6 +120,14 @@ I used Docker. You can run the etl.py and jupyter notebook.
 * then `Make etl` ==> python3 etl.py
 * A new folder `output` will created with the dimensions and fact table in `<folder>`
 * At the end, `docker stack rm stack.yml jupyter`, `docker swarm leave --force`, `docker rmi -f $(docker images -qa)`, `docker system prune --volumes`, `sudo docker images`
+
+Without Docker:
+  * Go to the `./work` directory
+  * for local development, install Python packages: `python3 -m pip install -r requirements.txt`
+  * Run Anaconda, then Jupyter Notebook
+  * From the Jupyter terminal, run the install script: `Make install` == > sh bootstrap_jupyter.sh (in jupyter Home , at the right, click button `new`, then `terminal`)
+  * Then `Make etl
+  * `Make re` clean the folder and delete folders `input` and `output`
 
 ## ETL process
 
@@ -231,7 +236,15 @@ Where are from?
 what are the student profils (age, country born, country indicators)?   
 
 
-In this project, the data is transforming, cleasning, staging and load into a datawarehouse.
+In this project, the data is transforming, cleansing, staging and load into a datawarehouse.
+* [Take a look to the dataset](./work/notebook/0_Take_a_look_dataset.ipynb)
+* [Exploration with Python](./work/notebook/1_Exploration_python.ipynb)
+* [Load raw data and saved in staging files](./work/notebook/read_file1.py)
+* [Data cleansing](./work/notebook/cleasning.py)
+* [Create dimensions and fact tables](./work/notebook/process_tables.py)
+* Answer to the questions
+
+I use Python, PySpark, Docker, Amazon S3. 
 
 ### **Describe and Gather Data**
 
@@ -424,7 +437,7 @@ Column Name | Description | Example | Type
 ### **Explore the Data** 
 #### Data Source
 
-[Datacdictionnary](2_data_dictionnary.ipynb) provides informations about dataset and tables used. [This notebook](1_Exploration_python.ipynb) performs a first exploration with Python and explain the datasets, which variables I kept. 
+[Data dictionnary](2_data_dictionnary.ipynb) provides informations about dataset and tables used. [This notebook](1_Exploration_python.ipynb) performs a first exploration with Python and explain the datasets, which variables I kept. 
 
 Dataset |File |Data Source|Dataframe Name
 -|-|-|-|
@@ -438,6 +451,9 @@ US Cities Demographic| us-cities-demographics.csv|provide by Udacity|df_demograp
 Indicators developpment| WDIData.csv| [World Bank](https://www.kaggle.com/xavier14/wdidata)|df_indicator_dev
 </br>
 
+<details>
+  <summary>Click here to deploy the whole resume of the dataset.</summary>
+<pre>
 ##### I94 Immigration Data
 * Source: https://travel.trade.gov/research/reports/historical/2016.html
     * data 'data/18-83510-I94-Data-2016', provide one file per month
@@ -505,8 +521,9 @@ Indicators developpment| WDIData.csv| [World Bank](https://www.kaggle.com/xavier
 * Source: I94_SAS_Labels_Description.SAS
     * data 'i94visa.csv'
         * data 'i94visa.csv' povides code Visa ans Visa
-  
-
+</pre>
+</details>  
+</br>
 In the first one, the exploration was done with Python and an extract from I94. In a second time, the ETL script uses Pyspark given the I94 file size. 
 
 [This notebook 1_Exploration_python](./work/notebook/1_Exploration_python.ipynb#explore) performs the exploration with python.

@@ -242,7 +242,7 @@ def main():
     print('Done!')
     print(" ")
     print('***** create fact_immigration is processing...')
-    create_fact_immigration_table(df_clean_immigration, dim_airport_us, dim_country, dim_demography, dim_indicator, output_parquet)
+    fact_immigration = create_fact_immigration_table(df_clean_immigration, dim_airport_us, dim_country, dim_demography, dim_indicator, output_parquet)
     print('Done!')
     print(" ")
 
