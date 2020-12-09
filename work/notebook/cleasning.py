@@ -79,10 +79,11 @@ def clean_immigration(df_immigration, i94_port):
 
         print('***** Make df_immigration_clean processing ')
         df_immigration_clean.printSchema()
-        df_immigration_clean.show(2)
-        return(df_immigration_clean)
+        df_immigration_clean.show(2)        
     except Exception as e:
         print("Unexpected error: %s" % e)
+    else:
+        return(df_immigration_clean)
 
 
 
@@ -107,9 +108,10 @@ def clean_temperature(df_temperature):
         print('***** Make df_clean_temperature processing ')
         df_clean_temperature.printSchema()
         df_clean_temperature.show(2)
-        return(df_clean_temperature)
     except Exception as e:
         print("Unexpected error: %s" % e)
+    else:
+        return(df_clean_temperature)
 
 def  clean_airport_code(df_airport_code):
     """
@@ -143,9 +145,10 @@ def  clean_airport_code(df_airport_code):
         print('***** Make df_clean_airport_code processing ')
         df_clean_airport_code.printSchema()
         df_clean_airport_code.show(2)
-        return(df_clean_airport_code)
     except Exception as e:
         print("Unexpected error: %s" % e)
+    else:
+        return(df_clean_airport_code)
 
 def clean_global_airports(df_global_airports):
     """
@@ -165,9 +168,10 @@ def clean_global_airports(df_global_airports):
         print('***** Make df_clean_global_airports processing ')
         df_clean_global_airports.printSchema()
         df_clean_global_airports.show(2)
-        return(df_clean_global_airports)
     except Exception as e:
         print("Unexpected error: %s" % e)
+    else:
+        return(df_clean_global_airports)
 
 def clean_iso_country(df_iso_country):
     """
@@ -189,9 +193,10 @@ def clean_iso_country(df_iso_country):
         print('***** Make df_clean_iso_country processing ')
         df_clean_iso_country.printSchema()
         df_clean_iso_country.show(2)
-        return(df_clean_iso_country)
     except Exception as e:
-        print("Unexpected error: %s" % e) 
+        print("Unexpected error: %s" % e)
+    else:
+        return(df_clean_iso_country)
 
 def clean_demograph(df_demograph): 
     """
@@ -200,26 +205,27 @@ def clean_demograph(df_demograph):
     try:
         drop_cols = ["Number_of_Veterans"]
         newdf = df_demograph.drop(*drop_cols) \
-                    .select(F.col("City").alias("city_name"), \
-                            F.col("State").alias("state_name"), \
-                            F.col("Median Age").alias("median_age"), \
-                            F.col("Male Population").alias("male_population"), \
-                            F.col("Female Population").alias("female_population"), \
-                            F.col("Total Population").alias("totale_population"), \
-                            F.col("Foreign-born").alias("foreign_born"), \
-                            F.col("State Code").alias("state_id"), \
-                            F.col("Race").alias("ethnic"), \
-                            F.col("Count"))
+                    .select(F.col("city").alias("city_name"), \
+                            F.col("state").alias("state_name"), \
+                            F.col("median_age"), \
+                            F.col("male_population"), \
+                            F.col("female_population"), \
+                            F.col("total_population"), \
+                            F.col("foreign-born"), \
+                            F.col("state_code").alias("state_id"), \
+                            F.col("race").alias("ethnic"), \
+                            F.col("count"))
         df_clean_demograph = newdf.groupBy("state_name", "state_id", "city_name", "median_age", "male_population", "female_population", "ethnic") \
-                                .agg(F.avg("Count").cast('int').alias("ethnic_count")) \
+                                .agg(F.avg("count").cast('int').alias("ethnic_count")) \
                                 .orderBy("state_name", "city_name", "ethnic") \
                                 .dropDuplicates()
         print('***** Make df_clean_demograph processing ')
         df_clean_demograph.printSchema()
         df_clean_demograph.show(2)
-        return(df_clean_demograph)
     except Exception as e:
         print("Unexpected error: %s" % e)
+    else:
+        return(df_clean_demograph)
 
 def clean_indicator_dev(df_indicator_dev):
     """
@@ -244,29 +250,30 @@ def clean_indicator_dev(df_indicator_dev):
         # create columns 'Indicator_group' to setup indicator fields
         newdf = newdf.withColumn(
             "indicator_group", 
-            F.when( F.lower(F.col('Indicator Name')).rlike('|'.join(demography)), F.lit('demography').cast('string')) \
-            .when( F.lower(F.col('Indicator Name')).rlike('|'.join(food)), F.lit('food').cast('string')) \
-            .when( F.lower(F.col('Indicator Name')).rlike('|'.join(trade)), F.lit('trade').cast('string')) \
-            .when( F.lower(F.col('Indicator Name')).rlike('|'.join(health)), F.lit('health').cast('string')) \
-            .when( F.lower(F.col('Indicator Name')).rlike('|'.join(economy)), F.lit('economy').cast('string')) \
-            .when( F.lower(F.col('Indicator Name')).rlike('|'.join(energy)), F.lit('energy').cast('string')) \
-            .when( F.lower(F.col('Indicator Name')).rlike('|'.join(education)), F.lit('education').cast('string')) \
-            .when( F.lower(F.col('Indicator Name')).rlike('|'.join(employment)), F.lit('employment').cast('string')) \
-            .when( F.lower(F.col('Indicator Name')).rlike('|'.join(rural)), F.lit('rural').cast('string')) \
-            .when( F.lower(F.col('Indicator Name')).rlike('|'.join(urban)), F.lit('urban').cast('string')))  
+            F.when( F.lower(F.col('indicator_name')).rlike('|'.join(demography)), F.lit('demography').cast('string')) \
+            .when( F.lower(F.col('indicator_name')).rlike('|'.join(food)), F.lit('food').cast('string')) \
+            .when( F.lower(F.col('indicator_name')).rlike('|'.join(trade)), F.lit('trade').cast('string')) \
+            .when( F.lower(F.col('indicator_name')).rlike('|'.join(health)), F.lit('health').cast('string')) \
+            .when( F.lower(F.col('indicator_name')).rlike('|'.join(economy)), F.lit('economy').cast('string')) \
+            .when( F.lower(F.col('indicator_name')).rlike('|'.join(energy)), F.lit('energy').cast('string')) \
+            .when( F.lower(F.col('indicator_name')).rlike('|'.join(education)), F.lit('education').cast('string')) \
+            .when( F.lower(F.col('indicator_name')).rlike('|'.join(employment)), F.lit('employment').cast('string')) \
+            .when( F.lower(F.col('indicator_name')).rlike('|'.join(rural)), F.lit('rural').cast('string')) \
+            .when( F.lower(F.col('indicator_name')).rlike('|'.join(urban)), F.lit('urban').cast('string')))  
         # make aggregation 
-        newdf = newdf.groupBy('Country Name', 'Country Code', 'indicator_group') \
+        newdf = newdf.groupBy('country_name', 'country_code', 'indicator_group') \
                 .agg(F.avg('indic_2015')).alias('avg_2015') \
-                .orderBy('Country Name', 'indicator_group') \
+                .orderBy('country_name', 'indicator_group') \
                 .where(F.col('indicator_group').isNotNull())
         df_clean_indicator_dev = newdf \
-                            .select(F.col('Country Name').alias('country_name'), \
-                                    F.col('Country code').alias('country_code'), \
+                            .select(F.col('country_name'), \
+                                    F.col('country_code'), \
                             'indicator_group', \
                             F.round(F.col('avg(indic_2015)'), 2).alias('avg_2015'))
         print('***** Make df_clean_indicator_dev processing ')
         df_clean_indicator_dev.printSchema()
         df_clean_indicator_dev.show(2)
-        return(df_clean_indicator_dev)
     except Exception as e:
         print("Unexpected error: %s" % e)
+    else:
+        return(df_clean_indicator_dev)

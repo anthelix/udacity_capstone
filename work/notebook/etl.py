@@ -190,7 +190,7 @@ def main():
     # read files and create dataframes
     df_immigration, df_temperature, df_airport_code, df_global_airports, df_iso_country, df_demograph, df_indicator_dev  = read_sas_csv(path_raw_data, spark)
     
-    i94_mode, i94_ctry, i94_addr, i94_visa, i94_port = read_labels_to_df(path_raw_data)
+    i94_mode, i94_ctry, i94_addr, i94_visa, i94_port = read_labels_to_df(input_data)
     print('***** All Dataframe are ready!')
 
 

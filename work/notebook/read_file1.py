@@ -4,7 +4,13 @@ import pandas as pd
 import sys
 import re
 
+from pyspark.sql import functions as F
+
 from process_tables import write_parquet
+
+# invalid characters in parquet column names are replaced by _
+def canonical(x): return re.sub("[ ,;{}()\n\t=]+", '_', x.lower())
+
 
 def read_sas(spark, path, file, cols):
     """
@@ -47,13 +53,19 @@ def read_csv(spark, path, file, cols, delimiter):
         .option('delimiter', delimiter) \
         .load(path+file) \
         .select(cols)
+    print(df.columns)
+    df = df.select([F.col(col).alias(col.replace(' ,;{}()\n\t=', '')) for col in df.columns])
+    print(df.columns)
     nb_rows = df.count()
     print(f'*****         Loading {nb_rows} rows')
     print(f'*****         Display the Schema')
     df.printSchema()
+    print(df.columns)
     print(f'*****         Display few rows')
     df.show(3, truncate = False)
     parquet_path = output_parquet + key
+    renamed_cols = [canonical(c) for c in df.columns]
+    df = df.toDF(*renamed_cols)
     write_parquet(df, parquet_path)
     return df
 
