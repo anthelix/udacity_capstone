@@ -11,6 +11,12 @@ from process_tables import write_parquet
 # invalid characters in parquet column names are replaced by _
 def canonical(x): return re.sub("[ ,;{}()\n\t=]+", '_', x.lower())
 
+def set_df_columns_nullable(spark, df, column_list, nullable=False):
+    for struct_field in df.schema:
+        if struct_field.name in column_list:
+            struct_field.nullable = nullable
+    df_mod = spark.createDataFrame(df.rdd, df.schema)
+    return df_mod
 
 def read_sas(spark, path, file, cols):
     """
@@ -26,6 +32,7 @@ def read_sas(spark, path, file, cols):
         .option('header', 'true') \
         .load(path+file) \
         .select(cols)
+    set_df_columns_nullable(spark,df,['cicid'])
     nb_rows = df.count()
     print(" ")
     print(f'*****         Loading {nb_rows} rows')
@@ -87,6 +94,7 @@ def read_csv_global_airports(spark, path, file, cols, delimiter,schema, header):
         .schema(schema) \
         .load(path+file) \
         .select(cols)
+    set_df_columns_nullable(spark,df,['airport_iata'])
     nb_rows = df.count()
     print(f'*****         Loading {nb_rows} rows')
     print(f'*****              Display the Schema')
@@ -105,6 +113,7 @@ def read_csv_iso_country(spark, path, file):
     key = file.split('.')[0]
     print(" ")
     print(f"...Path file is :  {path}{file} is processing...")
+
     #cols = ['English short name lower case', 'Alpha-2 code','Alpha-3 code', 'Numeric code', 'ISO_3166-2']
     
     # *********************************************** remove .schema(schema\ .select(cols)
@@ -113,7 +122,7 @@ def read_csv_iso_country(spark, path, file):
         .option('header', 'true') \
         .option('inferSchema', 'true') \
         .load(path+file) 
-        
+    set_df_columns_nullable(spark,df,['English short name lower case'])
     df.show(3, truncate = False)
     
     df = df.withColumnRenamed("English short name lower case", "Country")\

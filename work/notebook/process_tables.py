@@ -109,41 +109,8 @@ def create_fact_immigration_table( df_clean_immigration, dim_airport_us, dim_cou
     create facts tables
     """
     try:
-        ti = df_clean_immigration.alias('ti')
-        ta = dim_airport_us.alias('ta')
-        tc = dim_country.alias('tc')
-        td = dim_demography.alias('td')
-        to = dim_indicator.alias('to')
+        fact_student = df_clean_immigration.alias('fact')
 
-        inner_join = ti.join(ta, 
-                             (ti.state_id_arrival == ta.state_id) & (ti.iata_code == ta.iata_code), 
-                             how='inner') \
-                       .join(tc, 
-                             (ti.country_born_num == tc.country_num), 
-                             how='inner') \
-                       .join(td,
-                             (ti.state_id_arrival == td.state_id),
-                              how = 'inner') \
-                        .join(to,
-                             (to.country_code == tc.country_iso3),
-                             how = 'inner')
-
-
-        fact_student = inner_join \
-                            .selectExpr('ti.id_i94', 
-                                        'ti.year',
-                                        'ti.month',
-                                        'ti.country_born_num',
-                                        'ti.country_res_num', 
-                                        'ti.age',
-                                        'ti.gender',
-                                        'td.ethnic',
-                                        'ti.iata_code',
-                                        'tc.avg_temperature', 
-                                        'to.avg_2015',
-                                        'ta.city_name', 
-                                        'ti.visatype') \
-                            .withColumn('ti.id_i94', monotonically_increasing_id())
         fact_student.printSchema()
         fact_student.show(5)
         fact_student.count()
