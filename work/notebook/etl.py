@@ -197,31 +197,31 @@ def main():
 
     print(" ")
     # process df_immigration
-    df_clean_immigration = clean_immigration(df_immigration, i94_port)
+    df_clean_immigration = clean_immigration(spark, input_data)
     print('df_immigration_clean is done')
     print(" ")
     # process df_temperature    
-    df_clean_temperature = clean_temperature(df_temperature)
+    df_clean_temperature = clean_temperature(spark, input_data)
     print('df_temperature_clean is done')
     print(" ")
     # process df_airport_code
-    df_clean_airport_code = clean_airport_code(df_airport_code)
+    df_clean_airport_code = clean_airport_code(spark, input_data)
     print('df_clean_airport_code is done')
     print(" ")
     # process df_global_airports
-    df_clean_global_airports = clean_global_airports(df_global_airports)
+    df_clean_global_airports = clean_global_airports(spark, input_data)
     print('df_clean_global_airports is done')
     print(" ")
     # process df_iso_country
-    df_clean_iso_country = clean_iso_country(df_iso_country) 
+    df_clean_iso_country = clean_iso_country(spark, input_data) 
     print('df_clean_iso_country is done')
     print(" ")
     # process df_demograph
-    df_clean_demograph = clean_demograph(df_demograph)
+    df_clean_demograph = clean_demograph(spark, input_data)
     print('df_clean_demograph is done')
     print(" ")
     # process df_indicator_dev
-    df_clean_indicator_dev = clean_indicator_dev(df_indicator_dev)
+    df_clean_indicator_dev = clean_indicator_dev(spark, input_data)
     print('df_clean_indicator_dev is done')
 
     # Create dimensions tables and fact table, saved in parquet files

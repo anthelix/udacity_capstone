@@ -19,6 +19,9 @@ re:
 		rm -r ${INDIR}; \
 	fi \
 
+	@mkdir ../output
+	@mkdir ../input
+
 
 
 	

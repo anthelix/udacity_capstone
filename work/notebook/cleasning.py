@@ -24,38 +24,66 @@ import os
 import re
 
 
-def clean_immigration(df_immigration, i94_port):
+def clean_immigration(spark, input_data):
     """
     clean and format the dataframe df_immigration
     """
     try:
+        #read files
+        i94_port = pd.read_parquet(input_data+'i94port.parquet')
+        i94_visa = pd.read_parquet(input_data+'i94visa.parquet')
+        df_immigration = spark.read.option("header","true").option("recursiveFileLookup","true").parquet(input_data+'i94_apr16')
         # create dictionnary from i94_port
         port_state_dic = dict([(i,a) for i, a in zip(i94_port.Port_id, i94_port.State_id)])
+        # create dictionnary from i94_visa
+        visa_dic = dict([(i,a) for i, a in zip(i94_visa.Code_visa.astype('float'), i94_visa.Visa)])
         # setup drop column
         drop_col = ['depdate', 'count', 'occup', 'entdepa', 'entdepd', 'entdepu', 'matflag', 'biryear', \
                     'insnum','visapost', 'fltno', 'admnum', 'insnum', 'dtaddto', 'arrdate', 'dtadfile']
         user_func =  udf(lambda x: port_state_dic.get(x))
+        visa_func = udf(lambda x: visa_dic.get(x))
+        print(visa_dic)
         
         # drop columns
+        #df_immigration.printSchema()
+        df_immigration = df_immigration.withColumn('i94visa',df_immigration['i94visa'].cast("float").alias('i94visa'))
+        #df_immigration.printSchema()
+        #print(df_immigration.dtypes)
+        #print(i94_port.dtypes)
+        #print(visa_dic)
+    
+        
         newdf = df_immigration.drop(*drop_col) \
                             .withColumn('i94addr', F.when((F.col('i94addr').isNull()), \
-                                                    user_func(df_immigration.i94port)) \
-                                                .otherwise(F.col('i94addr')))
+                                                            user_func(df_immigration.i94port)) \
+                                                    .otherwise(F.col('i94addr'))) \
+                            .withColumn('i94visa', F.when((F.col('i94visa').isNull()), \
+                                                            F.col('i94visa')) \
+                                                    .otherwise(visa_func(df_immigration.i94visa)))
+
+
+        # display(newdf.select([count(when(col(c).isNull(), c)).alias(c) for c in newdf.columns]).toPandas())
         # replace the null value and cast the columns in integer
         # int_col = ['cicid', 'i94yr', 'i94mon','i94cit', 'i94res', 'i94mode', 'i94bir', 'i94visa']
-        null_int = {'cicid': -1, 'i94yr': -1, 'i94mon': -1,'i94cit': 239, 'i94res': 239, 'i94mode': 9, 'i94bir': -1, 'i94visa': -1}
+        null_int = {'cicid': -1, 'i94yr': -1, 'i94mon': -1,'i94cit': 239, 'i94res': 239, 'i94mode': 9, 'i94bir': -1}
         for k in null_int:
                 newdf = newdf.withColumn(k, F.when((F.col(k).isNull()), null_int[k])
                             .otherwise(F.col(k).cast("int")))
 
         # replace the null value for the string
         # str_cols = ['i94addr', 'i94port', 'gender', 'airline', 'visatype']
-        null_str = {'i94addr': '99', 'i94port': '999', 'gender': 'U', 'airline': 'unknown', 'visatype': '99' }
+        null_str = {'i94addr': '99', 'i94port': '999', 'gender': 'U', 'airline': 'unknown', 'visatype': '99', 'i94visa': 'unknown'}
         for k in null_str:
                 newdf = newdf.withColumn(k, F.when((F.col(k).isNull()), null_str[k])
                                         .otherwise(F.col(k)))
-
-        df_immigration_clean = (df_immigration.withColumnRenamed("cicid", "id_i94") \
+                
+                
+                
+                
+        newdf.printSchema()
+        newdf.show(5)
+    
+        df_immigration_clean = (newdf.withColumnRenamed("cicid", "id_i94") \
                     .withColumnRenamed("i94yr", "year") \
                     .withColumnRenamed("i94mon", "month") \
                     .withColumnRenamed("i94cit", "country_born_num") \
@@ -68,14 +96,21 @@ def clean_immigration(df_immigration, i94_port):
                     .withColumnRenamed("gender", "gender") \
                     .withColumnRenamed("airline","airline") \
                     .withColumnRenamed("visatype:", "visatype"))
+        df_immigration_clean.show(5)
         df_immigration_clean = df_immigration_clean \
-                .withColumn('arr_reason', df_immigration_clean.arr_reason.cast('int')) \
+                .withColumn('arr_reason', df_immigration_clean.arr_reason.cast('string')) \
                 .withColumn('arri_mode', df_immigration_clean.arri_mode.cast('int'))\
                 .withColumn('country_res_num', df_immigration_clean.country_res_num.cast('int')) \
                 .withColumn('country_born_num', df_immigration_clean.country_born_num.cast('int')) \
                 .withColumn('age', df_immigration_clean.age.cast('int')) \
-                .filter('arr_reason == 3') \
-                .dropDuplicates()
+                .dropDuplicates() \
+                .filter(df_immigration_clean.arri_mode.isNotNull()) \
+                .fillna('99', subset=['state_id_arrival']) \
+                .fillna('unknown', subset=['airline']) \
+                .fillna('U', subset=['gender']) \
+                .fillna(-1, subset=['age'])\
+                .filter('arr_reason == "Student"')
+        df_immigration_clean.show(5)
 
         print('***** Make df_immigration_clean processing ')
         df_immigration_clean.printSchema()
@@ -85,14 +120,12 @@ def clean_immigration(df_immigration, i94_port):
     else:
         return(df_immigration_clean)
 
-
-
-
-def clean_temperature(df_temperature):
+def clean_temperature(spark, input_data):
     """
     Clean and format dataframe df_temperature
     """
     try:
+        df_temperature = spark.read.option("header","true").option("recursiveFileLookup","true").parquet(input_data+'GlobalLandTemperaturesByCity')
         # drop column "AverageTemperatureUncertainty"
         drop_cols = ["dt", "AverageTemperatureUncertainty", "Latitude", "Longitude", "city"]
         newdf = df_temperature.drop(*drop_cols)
@@ -113,11 +146,13 @@ def clean_temperature(df_temperature):
     else:
         return(df_clean_temperature)
 
-def  clean_airport_code(df_airport_code):
+def  clean_airport_code(spark, input_data):
     """
     clean dataframe df_airport_code and return a dataframe
     """
     try:
+        #read file
+        df_airport_code = spark.read.option("header","true").option("recursiveFileLookup","true").parquet(input_data+'airport-codes_csv')
         # drop columns
         # filter closed , heliport and seaplace base airport, small_airport
         # keep us airport
@@ -150,11 +185,13 @@ def  clean_airport_code(df_airport_code):
     else:
         return(df_clean_airport_code)
 
-def clean_global_airports(df_global_airports):
+def clean_global_airports(spark, input_data):
     """
     clean dataframe df_global_airports and return a dataframe
     """
     try:
+        #read file
+        df_global_airports = spark.read.option("header","true").csv(input_data+'airports-extended.csv')
         drop_cols = ["icao","type", "latitude", "longitude", "altitude", "timezone", "dst", "tz_timezone", "data_source"]
         newdf = df_global_airports.filter(df_global_airports.type.isin('airport', 'unknown')) \
                             .drop(*drop_cols)
@@ -164,7 +201,8 @@ def clean_global_airports(df_global_airports):
                                                 F.col("city").alias("city_name"), \
                                                 F.col("country").alias("country_name"), \
                                                 F.col("iata").alias("iata_code")) \
-                                        .dropDuplicates()    
+                                        .dropDuplicates()  \
+                                        .fillna("unknown", subset=['city_name',"iata_code"])  
         print('***** Make df_clean_global_airports processing ')
         df_clean_global_airports.printSchema()
         df_clean_global_airports.show(2)
@@ -173,11 +211,13 @@ def clean_global_airports(df_global_airports):
     else:
         return(df_clean_global_airports)
 
-def clean_iso_country(df_iso_country):
+def clean_iso_country(spark, input_data):
     """
     clean dataframe df_iso_country and return a dataframe
     """
     try:
+        #read file
+        df_iso_country = spark.read.option("header","true").csv(input_data+'wikipedia-iso-country-codes.csv')
         df = (df_iso_country.withColumnRenamed('English short name lower case','country_name') \
                             .withColumnRenamed('Alpha_2', 'country_iso2') \
                             .withColumnRenamed('Alpha_3', 'country_iso3') \
@@ -198,11 +238,13 @@ def clean_iso_country(df_iso_country):
     else:
         return(df_clean_iso_country)
 
-def clean_demograph(df_demograph): 
+def clean_demograph(spark, input_data): 
     """
     clean dataframe df_demograph and return a dataframe
     """
     try:
+        #read file
+        df_demograph = spark.read.option("header","true").option("recursiveFileLookup","true").parquet(input_data+'us-cities-demographics')
         drop_cols = ["Number_of_Veterans"]
         newdf = df_demograph.drop(*drop_cols) \
                     .select(F.col("city").alias("city_name"), \
@@ -218,7 +260,8 @@ def clean_demograph(df_demograph):
         df_clean_demograph = newdf.groupBy("state_name", "state_id", "city_name", "median_age", "male_population", "female_population", "ethnic") \
                                 .agg(F.avg("count").cast('int').alias("ethnic_count")) \
                                 .orderBy("state_name", "city_name", "ethnic") \
-                                .dropDuplicates()
+                                .dropDuplicates() \
+                                .fillna(-1, subset=['male_population','female_population'])
         print('***** Make df_clean_demograph processing ')
         df_clean_demograph.printSchema()
         df_clean_demograph.show(2)
@@ -227,11 +270,13 @@ def clean_demograph(df_demograph):
     else:
         return(df_clean_demograph)
 
-def clean_indicator_dev(df_indicator_dev):
+def clean_indicator_dev(spark, input_data):
     """
     clean dataframe df_indicator_dev and return a dataframe
     """
     try:
+        #read file
+        df_indicator_dev = spark.read.option("header","true").option("recursiveFileLookup","true").parquet(input_data+'WDIData')
         # get key words for indicators fields
         demography = ['population','birth','death','fertility','mortality','expectancy']
         food = ['food','grain','nutrition','calories']

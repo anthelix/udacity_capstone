@@ -440,8 +440,8 @@ Column Name | Description | Example | Type
 [Data dictionnary](2_data_dictionnary.ipynb) provides informations about dataset and tables used. [This notebook](1_Exploration_python.ipynb) performs a first exploration with Python and explain the datasets, which variables I kept. 
 
 Dataset |File |Data Source|Dataframe Name
--|-|-|-|
-I94 Immigration | immigration_data_sample.csv| [US National Tourism and Trade Office](https://travel.trade.gov/research/programs/i94/description.asp)| df_immigration
+|-|-|-|-|
+|I94 Immigration | immigration_data_sample.csv| [US National Tourism and Trade Office](https://travel.trade.gov/research/programs/i94/description.asp)| df_immigration
 I94 Description Labels  Description|I94_SAS_Labels_Descriptions.SAS |US National Tourism and Trade Office|
 Global Land Temperature|GlobalLandTemperaturesByCity.csv| [Berkeley Earth](http://berkeleyearth.org/)|df_temperature
 Global Airports|airports-extended.csv| [OpenFlights.org and user contributions](https://www.kaggle.com/open-flights/airports-train-stations-and-ferry-terminals)|df_global_airports
