@@ -128,14 +128,14 @@ def read_sas_csv(path_raw_data, spark):
             T.StructField('country', T.StringType(), False),
             T.StructField('iata', T.StringType(), False),
             T.StructField('icao', T.StringType(), False),
-            T.StructField('latitude', T.StringType(), False),
-            T.StructField('longitude', T.StringType(), False),
-            T.StructField('altitude', T.IntegerType(), False),
-            T.StructField('timezone', T.StringType(), False),
-            T.StructField('dst', T.StringType(), False),
-            T.StructField('tz_timezone', T.StringType(), False),
-            T.StructField('type', T.StringType(), False),
-            T.StructField('data_source', T.StringType(), False)
+            T.StructField('latitude', T.StringType(), True),
+            T.StructField('longitude', T.StringType(), True),
+            T.StructField('altitude', T.IntegerType(), True),
+            T.StructField('timezone', T.StringType(), True),
+            T.StructField('dst', T.StringType(), True),
+            T.StructField('tz_timezone', T.StringType(), True),
+            T.StructField('type', T.StringType(), True),
+            T.StructField('data_source', T.StringType(), True)
             ])
         df_global_airports = read_csv_global_airports(spark, path_raw_data, file, cols, delimiter, schema, header=False )
         
