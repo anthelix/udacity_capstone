@@ -37,21 +37,19 @@ def clean_immigration(spark, input_data):
         port_state_dic = dict([(i,a) for i, a in zip(i94_port.Port_id, i94_port.State_id)])
         # create dictionnary from i94_visa
         visa_dic = dict([(i,a) for i, a in zip(i94_visa.Code_visa.astype('float'), i94_visa.Visa)])
+        # create dictionnary from i94_mode
+        mode_dic = dict([(i,a) for i, a in zip(i94_mode.Mode_id.astype('string'), i94_mode.Mode)])
         # setup drop column
         drop_col = ['depdate', 'count', 'occup', 'entdepa', 'entdepd', 'entdepu', 'matflag', 'biryear', \
                     'insnum','visapost', 'fltno', 'admnum', 'insnum', 'dtaddto', 'arrdate', 'dtadfile']
-        user_func =  udf(lambda x: port_state_dic.get(x))
+        user_func = udf(lambda x: port_state_dic.get(x))
         visa_func = udf(lambda x: visa_dic.get(x))
-        print(visa_dic)
+        mode_func = udf(lambda x: mode_dic.get(x))
         
         # drop columns
-        #df_immigration.printSchema()
-        df_immigration = df_immigration.withColumn('i94visa',df_immigration['i94visa'].cast("float").alias('i94visa'))
-        #df_immigration.printSchema()
-        #print(df_immigration.dtypes)
-        #print(i94_port.dtypes)
-        #print(visa_dic)
-    
+        df_immigration = df_immigration.withColumn('i94visa',df_immigration['i94visa'].cast("float").alias('i94visa')) \
+                                        .withColumn('i94mode',df_immigration['i94mode'].cast('int').cast("string").alias('i94mode'))
+  
         
         newdf = df_immigration.drop(*drop_col) \
                             .withColumn('i94addr', F.when((F.col('i94addr').isNull()), \
@@ -59,30 +57,26 @@ def clean_immigration(spark, input_data):
                                                     .otherwise(F.col('i94addr'))) \
                             .withColumn('i94visa', F.when((F.col('i94visa').isNull()), \
                                                             F.col('i94visa')) \
-                                                    .otherwise(visa_func(df_immigration.i94visa)))
-
-
+                                                    .otherwise(visa_func(df_immigration.i94visa))) \
+                            .withColumn('i94mode', F.when((F.col('i94mode').isNull()), \
+                                                            F.col('i94mode')) \
+                                                    .otherwise(mode_func(df_immigration.i94mode)))
+               
         # display(newdf.select([count(when(col(c).isNull(), c)).alias(c) for c in newdf.columns]).toPandas())
         # replace the null value and cast the columns in integer
         # int_col = ['cicid', 'i94yr', 'i94mon','i94cit', 'i94res', 'i94mode', 'i94bir', 'i94visa']
-        null_int = {'cicid': -1, 'i94yr': -1, 'i94mon': -1,'i94cit': 239, 'i94res': 239, 'i94mode': 9, 'i94bir': -1}
+        null_int = {'cicid': -1, 'i94yr': -1, 'i94mon': -1,'i94cit': 239, 'i94res': 239, 'i94bir': -1}
         for k in null_int:
                 newdf = newdf.withColumn(k, F.when((F.col(k).isNull()), null_int[k])
                             .otherwise(F.col(k).cast("int")))
 
         # replace the null value for the string
-        # str_cols = ['i94addr', 'i94port', 'gender', 'airline', 'visatype']
-        null_str = {'i94addr': '99', 'i94port': '999', 'gender': 'U', 'airline': 'unknown', 'visatype': '99', 'i94visa': 'unknown'}
+        # str_cols = ['i94addr', 'i94port', 'gender', 'airline', 'visatype', 'i94mode', 'i94visa']
+        null_str = {'i94addr': '99', 'i94port': '999', 'gender': 'U', 'airline': 'unknown', 'i94mode': 'unknown', 'visatype': '99', 'i94visa': 'unknown'}
         for k in null_str:
                 newdf = newdf.withColumn(k, F.when((F.col(k).isNull()), null_str[k])
                                         .otherwise(F.col(k)))
-                
-                
-                
-                
-        newdf.printSchema()
-        newdf.show(5)
-    
+
         df_immigration_clean = (newdf.withColumnRenamed("cicid", "id_i94") \
                     .withColumnRenamed("i94yr", "year") \
                     .withColumnRenamed("i94mon", "month") \
@@ -96,10 +90,10 @@ def clean_immigration(spark, input_data):
                     .withColumnRenamed("gender", "gender") \
                     .withColumnRenamed("airline","airline") \
                     .withColumnRenamed("visatype:", "visatype"))
-        df_immigration_clean.show(5)
+
         df_immigration_clean = df_immigration_clean \
                 .withColumn('arr_reason', df_immigration_clean.arr_reason.cast('string')) \
-                .withColumn('arri_mode', df_immigration_clean.arri_mode.cast('int'))\
+                .withColumn('arri_mode', df_immigration_clean.arri_mode.cast('string'))\
                 .withColumn('country_res_num', df_immigration_clean.country_res_num.cast('int')) \
                 .withColumn('country_born_num', df_immigration_clean.country_born_num.cast('int')) \
                 .withColumn('age', df_immigration_clean.age.cast('int')) \
@@ -110,7 +104,6 @@ def clean_immigration(spark, input_data):
                 .fillna('U', subset=['gender']) \
                 .fillna(-1, subset=['age'])\
                 .filter('arr_reason == "Student"')
-        df_immigration_clean.show(5)
 
         print('***** Make df_immigration_clean processing ')
         df_immigration_clean.printSchema()
