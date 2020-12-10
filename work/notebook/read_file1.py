@@ -26,7 +26,7 @@ def read_sas(spark, path, file, cols):
     output_parquet = '../input/'
     key = 'i94_apr16'
     print(" ")
-    print(f"...Path file is :  {path}{file} is processing...")
+    print(f"...Process the file :   {path}{file}.")
     df = spark.read \
         .format('com.github.saurfang.sas.spark') \
         .option('header', 'true') \
@@ -35,11 +35,11 @@ def read_sas(spark, path, file, cols):
     set_df_columns_nullable(spark,df,['cicid'])
     nb_rows = df.count()
     print(" ")
-    print(f'*****         Loading {nb_rows} rows')
-    print(f'*****         Display the Schema')
-    df.printSchema()
-    print(f'*****         Display few rows')
-    df.show(3, truncate = False)
+    #print(f'*****         Loading {nb_rows} rows')
+    #print(f'*****         Display the Schema')
+    #df.printSchema()
+    #print(f'*****         Display few rows')
+    #df.show(3, truncate = False)
     parquet_path = output_parquet + key
     write_parquet(df, parquet_path)
     return df
@@ -52,7 +52,7 @@ def read_csv(spark, path, file, cols, delimiter):
     output_parquet = '../input/'
     key = file.split('.')[0]
     print(" ")
-    print(f"...Path file is :  {path}{file} is processing...")
+    print(f"...Process the file :   {path}{file}.")
     df = spark.read \
         .format("csv") \
         .option('header', 'true') \
@@ -63,11 +63,11 @@ def read_csv(spark, path, file, cols, delimiter):
 
     df = df.select([F.col(col).alias(col.replace(' ,;{}()\n\t=', '')) for col in df.columns])
     nb_rows = df.count()
-    print(f'*****         Loading {nb_rows} rows')
-    print(f'*****         Display the Schema')
-    df.printSchema()
-    print(f'*****         Display few rows')
-    df.show(3, truncate = False)
+    #print(f'*****         Loading {nb_rows} rows')
+    #print(f'*****         Display the Schema')
+    #df.printSchema()
+    #print(f'*****         Display few rows')
+    #df.show(3, truncate = False)
     parquet_path = output_parquet + key
     renamed_cols = [canonical(c) for c in df.columns]
     df = df.toDF(*renamed_cols)
@@ -83,7 +83,7 @@ def read_csv_global_airports(spark, path, file, cols, delimiter,schema, header):
     key = file.split('.')[0]
 
     print(" ")
-    print(f"...Path file is :  {path}{file} is processing...")
+    print(f"...Process the file :   {path}{file}.")
     
   
     df = spark.read \
@@ -96,11 +96,11 @@ def read_csv_global_airports(spark, path, file, cols, delimiter,schema, header):
         .select(cols)
     set_df_columns_nullable(spark,df,['airport_iata'])
     nb_rows = df.count()
-    print(f'*****         Loading {nb_rows} rows')
-    print(f'*****              Display the Schema')
-    df.printSchema()          
-    print(f'*****              Display few rows')
-    df.show(3, truncate = False)
+    #print(f'*****         Loading {nb_rows} rows')
+    #print(f'*****              Display the Schema')
+    #df.printSchema()          
+    #print(f'*****              Display few rows')
+    #df.show(3, truncate = False)
     df.toPandas().to_csv(f'{output_csv}{key}.csv')
     return df
 
@@ -112,18 +112,17 @@ def read_csv_iso_country(spark, path, file):
     output_csv = '../input/'
     key = file.split('.')[0]
     print(" ")
-    print(f"...Path file is :  {path}{file} is processing...")
+    print(f"...Process the file :   {path}{file}.")
 
     #cols = ['English short name lower case', 'Alpha-2 code','Alpha-3 code', 'Numeric code', 'ISO_3166-2']
     
-    # *********************************************** remove .schema(schema\ .select(cols)
     df = spark.read \
         .format("csv") \
         .option('header', 'true') \
         .option('inferSchema', 'true') \
         .load(path+file) 
     set_df_columns_nullable(spark,df,['English short name lower case'])
-    df.show(3, truncate = False)
+    #df.show(3, truncate = False)
     
     df = df.withColumnRenamed("English short name lower case", "Country")\
            .withColumnRenamed("Alpha-2 code", "Alpha_2")\
@@ -131,11 +130,11 @@ def read_csv_iso_country(spark, path, file):
            .withColumnRenamed("Numeric code", "Num_code")
     
     nb_rows = df.count()
-    print(f'*****         Loading {nb_rows} rows')
-    print(f'*****              Display the Schema')
-    df.printSchema()          
-    print(f'*****              Display few rows')
-    df.show(3, truncate = False)
+    #print(f'*****         Loading {nb_rows} rows')
+    #print(f'*****              Display the Schema')
+    #df.printSchema()          
+    #print(f'*****              Display few rows')
+    #df.show(3, truncate = False)
     df.toPandas().to_csv(f'{output_csv}{key}.csv')
     return df
 

@@ -531,68 +531,39 @@ In the first one, the exploration was done with Python and an extract from I94. 
 ## **Step 3: Define the Data Model**
 3.1 Conceptual Data Model
 
-On the basis of a star schema, this allows to quickly find the elements linked to each other.It consists of a large fact table and a circle of other tables that contain the descriptive elements of the fact, called "dimensions". Table fact contaiins observable data (the facts) that we have on a subject and that we want to study, according axes of analysis (the dimensions).
+On the basis of a star schema, this allows to quickly find the elements linked to each other.It consists of a large fact table and other tables that contain the descriptive elements of the fact, called "dimensions". Table fact contaiins observable data (the facts) that we have on a subject and that we want to study, according axes of analysis (the dimensions).
 The immigration dataset is the center of this project and allow us to explore foreign visitors. It will the fact table. Dimension tables give us information about a piece of this visitors, country, airport, indicator economics, and us demography. 
+* fact_immigration comes from [I94 Immigration Data](./2_Data_dictionnary.ipynb#I94) and from [I94 labels](./2_Data_dictionnary.ipynb#labels)
+* dim_airport comes from [aiport-codes_csv.csv]() and [aiports-extended.csv]()
+* dim_country comes from [GlobalLandTemperaturesByCity.csv]() and [wikipedia-iso-country-codes.csv]()
+* dim_indicator comes from [WDIData.csv]()
+* dim_demography comes from [us-cities-demographics.csv]
 
 [](./doc/dend_schema.png)
 
-
----
 3.2 Mapping out data pipeline
+* Load I94 labels file, create parquets files by items and store them in `input` folder
+* Load the others files, define schema and columns, store them in parquet ou csv files in `input` folder.
+* Read I94 labels files from `input` and  extract data in dataframes
+* Read the others files from `input`, clean them and store data in dataframes
+* Read the data from the dataframes and process the dimensions and fact tables, store them in parquet files in `ouput` folder. 
+* 
+## Step 4: Run ETL to model the data
+
+4.1 Create the data model
+* dim_demography : Average people by ethnic by US state. 
+* dim_indicator : Indicatore developpement by country. I group the indicators by topic (energy, food ...) and give the average note for the year 2015.
+* dim_country : Name, iso code and average temperature for most countries
+* dim_airport_us : Informations about the us aiport, code Iata, name, state
+* fact_immigration : Details about people entering in US
+  
+4.2 
+
+
+## Step 5: Complete Project write up
+
+
  TODO : add schema of table nullable and unique ras le 10/12
  TODO: Revoir la fact table? nettoyage? remplacement des missing value, format? ras le 10/12
 TODO: les scripts clean doivent lire depuis le datalake, depuis input, RAS le 9/12
  TODO: regarder dans project 4 ou 3, script pour S3 et Redshift, et donc revoir la structure du dossier? est ce que je le fais avec docker? later ... must send the project
-
-```
-***** create fact_student is processing...
-root
- |-- id_i94: double (nullable = true)
- |-- year: double (nullable = true)
- |-- month: double (nullable = true)
- |-- country_born_num: integer (nullable = true)
- |-- country_res_num: integer (nullable = true)
- |-- age: integer (nullable = true)
- |-- gender: string (nullable = true)
- |-- ethnic: string (nullable = true)
- |-- iata_code: string (nullable = true)
- |-- avg_temperature: float (nullable = true)
- |-- avg_2015: decimal(22,2) (nullable = true)
- |-- city_name: string (nullable = true)
- |-- visatype: string (nullable = true)
- |-- ti.id_i94: long (nullable = false)
-```
-```
-***** create_demography_table is processing...
-root
- |-- state_id: string (nullable = true)
- |-- ethnic: string (nullable = true)
- |-- avg_ethnic: decimal(22,2) (nullable = true)
-```
-
-```
-***** create_indicator_table is processing...
-root
- |-- country_code: string (nullable = true)
- |-- indicator_group: string (nullable = true)
- |-- avg_2015: decimal(22,2) (nullable = true)
-```
-
-```
-***** create_country_table is processing...
-root
- |-- country_name: string (nullable = true)
- |-- country_iso2: string (nullable = true)
- |-- country_iso3: string (nullable = true)
- |-- country_num: integer (nullable = true)
- |-- avg_temperature: float (nullable = true)
-```
---- 
-
-## Step 4: Run ETL to model the data
-
-
-
-
-## Step 5: Complete Project write up
-    

@@ -37,7 +37,7 @@ def create_usairport_table(df_clean_airport_code, df_clean_global_airports, outp
         print(dim_airport_us.count())
         dim_airport_us.collect()
         parquet_path = output_parquet + 'usairport_table'
-        #dim_airport_us.limit(5).toPandas().to_csv(output_parquet+"usairport_table.csv", header=True)
+        dim_airport_us.toPandas().to_csv(output_parquet+"usairport_table.csv", header=True)
         write_parquet(dim_airport_us, parquet_path)
         return(dim_airport_us)
     except Exception as e:
@@ -61,7 +61,7 @@ def create_country_table(df_clean_iso_country, df_clean_temperature, output_parq
         dim_country.printSchema()
         dim_country.show(2)
         dim_country.collect()
-        #dim_country.limit(5).toPandas().to_csv(output_parquet+"country_table.csv", header=True)
+        dim_country.toPandas().to_csv(output_parquet+"country_table.csv", header=True)
         parquet_path = output_parquet + 'country_table'
         write_parquet(dim_country, parquet_path)
         return(dim_country)
@@ -83,7 +83,7 @@ def create_indicator_table(df_clean_indicator_dev, output_parquet):
         dim_indicator.printSchema()
         dim_indicator.show(2)
         dim_indicator.collect()
-        #dim_indicator.limit(5).toPandas().to_csv(output_parquet+"indicator_table.csv", header=True)
+        dim_indicator.toPandas().to_csv(output_parquet+"indicator_table.csv", header=True)
         parquet_path = output_parquet + 'indicator_table'
         write_parquet(dim_indicator, parquet_path)
         return( dim_indicator)
@@ -104,7 +104,7 @@ def create_demography_table(df_clean_demograph, output_parquet):
         #print(dim_airport_us.count())
         dim_demography.show(2)
         dim_demography.collect()
-        #dim_demography.limit(5).toPandas().to_csv(output_parquet+"demograph_table.csv", header=True)
+        dim_demography.toPandas().to_csv(output_parquet+"demograph_table.csv", header=True)
         parquet_path = output_parquet + 'demograph_table'
         write_parquet(dim_demography, parquet_path)
         
@@ -122,7 +122,7 @@ def create_fact_immigration_table(df_clean_immigration, output_parquet ):
 
         fact_student.printSchema()
         fact_student.count()
-        #fact_student.limit(5).toPandas().to_csv(output_parquet+"fact_immigration.csv", header=True)
+        fact_student.toPandas().to_csv(output_parquet+"fact_immigration.csv", header=True)
         fact_student.collect()
         parquet_path = output_parquet + 'fact_immigration'
         write_parquet(fact_student, parquet_path)

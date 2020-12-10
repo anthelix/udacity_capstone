@@ -45,7 +45,7 @@ def create_spark_session():
     """
     try: 
         print("\n")
-        print("...Create a Spark session...")
+        print("... Create a Spark session...")
         spark = SparkSession \
             .builder \
             .appName("Us_student_immigation") \
@@ -63,29 +63,31 @@ def create_parquet_label(path_raw_data):
     Create parquet files from I94 Description Labels.
     """
     try:
-        print("...Begin to create I94 Labels files")
+        print(" ")
+        print("... Begin to create I94 Labels files")
+        print(" ")
         file = 'I94_SAS_Labels_Descriptions.SAS'
         ## make i94port.parquet
         key = "i94port"
-        print("*********")
+        #print("*********")
         nb = parse_file(path_raw_data, file, key)
-        print(f'There are {nb} rows in {key}.parquet')        
+        #print(f'There are {nb} rows in {key}.parquet')        
         ## make i94visa.csv
         key = "i94visa"
         nb = parse_file(path_raw_data, file, key)
-        print(f'There are {nb} rows in {key}.parquet')
+        #print(f'There are {nb} rows in {key}.parquet')
         ## make i94addr.csv
         key = "i94addr"
         nb = parse_file(path_raw_data, file, key)
-        print(f'There are {nb} rows in {key}.parquet')
+        #print(f'There are {nb} rows in {key}.parquet')
         # make i94cit_i94res.csv
         key = "i94cit_i94res"
         nb = parse_file(path_raw_data, file, key)
-        print(f'There are {nb} rows in {key}.parquet')
+        #print(f'There are {nb} rows in {key}.parquet')
         # make i94mode.csv
         key = "i94mode"
         nb = parse_file(path_raw_data, file, key)
-        print(f'There are {nb} rows in {key}.parquet')
+        #print(f'There are {nb} rows in {key}.parquet')
         return
     except Exception as e:
         print("Unexpected error in create_parquet_label(): %s" % e)
@@ -98,28 +100,28 @@ def read_sas_csv(path_raw_data, spark):
     """
     try:
         # df_immigration
-        print('_____df_imigration____')
+        #print('_____df_imigration____')
         cols = ['cicid','i94yr','i94mon','i94cit','i94res','i94port','i94mode', 'i94addr','i94bir','i94visa','dtadfile', 'gender','airline','visatype']
         file = '18-83510-I94-Data-2016/i94_apr16_sub.sas7bdat'
         # todo :refaire avec S3 et tous les fichiers (get_path_sas_folder parquet file)
         df_immigration = read_sas(spark, path_raw_data, file, cols)
         
         # df_temperature
-        print('_____df_temperature____')
+        #print('_____df_temperature____')
         cols = ['AverageTemperature', 'City', 'Country']
         file = 'GlobalLandTemperaturesByCity.csv'
         delimiter = ','
         df_temperature = read_csv(spark, path_raw_data, file, cols, delimiter)
         
         # df_airport_code
-        print('_____df_airport_code____')
+        #print('_____df_airport_code____')
         file = 'airport-codes_csv.csv'
         cols = ['ident', 'type','name', 'iso_country', 'iso_region', 'municipality', 'iata_code', 'local_code']
         delimiter= ','
         df_airport_code = read_csv(spark, path_raw_data, file, cols, delimiter)
         
         # df_global_airports
-        print('_____df_global_airports____')
+        #print('_____df_global_airports____')
         file = 'airports-extended.csv'
         cols = ['airport_ID','type','name', 'city', 'country', 'iata']
         delimiter = ','
@@ -143,22 +145,22 @@ def read_sas_csv(path_raw_data, spark):
         df_global_airports = read_csv_global_airports(spark, path_raw_data, file, cols, delimiter, schema, header=False )
         
         # df_iso_country
-        print('_____df_iso_country____')
+        #print('_____df_iso_country____')
         file = 'wikipedia-iso-country-codes.csv'
         #cols = ['Country', 'Alpha_2','Alpha_3', 'Num_code', 'ISO_3166-2']
         #delimiter =','
-        file = 'wikipedia-iso-country-codes.csv' 
+        #file = 'wikipedia-iso-country-codes.csv' 
         df_iso_country  = read_csv_iso_country(spark, path_raw_data, file)
         
         # df_demograph
-        print('_____df_demograph____')
+        #print('_____df_demograph____')
         file = 'us-cities-demographics.csv'
         cols = ['City', 'State', 'Median Age', 'Male Population', 'Female Population', 'Total Population', 'Number of Veterans', 'Foreign-born', 'Average Household Size', 'State Code', 'Race', 'Count']
         delimiter = ';'
         df_demograph  = read_csv(spark, path_raw_data, file, cols, delimiter)
         
         # df_indicator_dev
-        print('_____df_indicator_dev____')
+        #print('_____df_indicator_dev____')
         file = 'WDIData.csv'
         delimiter = ','
         header =  False
@@ -171,24 +173,34 @@ def read_sas_csv(path_raw_data, spark):
 
 
 def main():
-    # path_raw_data = "s3a://udacity-dend/"            # Data from Udacity
-    path_raw_data = "../data/"                               # Run locally
+    ## PATH
+    # path_raw_data = "s3a://dend-paris/capstone"            # Data from Udacity
+    # path_raw_data = "s3a://<YOUR_BUCKET>/"  
+    path_raw_data = "../data/"                              # Run locally
+    
+    
     input_data = "../input/"
-    # output_data = "s3a://dend-paris/sparkify/"    # Anthelix bucket(me)
+    # input_data = "s3a://dend-paris/input_data/"    # Anthelix bucket(me)
+    # input_data = "s3a://<YOUR_BUCKET>/"          # Visitor bucket
+   
+    # output_data = "s3a://dend-paris/output_data/"  # Anthelix bucket(me)
     # output_data = "s3a://<YOUR_BUCKET>/"          # Visitor bucket
     output_data = "../output/"                     # Run localy
-    output_parquet = "../output/"
     
+    output_parquet = "../output/"
+    # output_parquet = "s3a://dend-paris/output_data/"    # Anthelix bucket(me)
+    # output_parquet = "s3a://<YOUR_BUCKET>/"
+    
+    ## SESSION
     # Create a SparkSession
+    print(" ")
     spark = create_spark_session()
-    print("... SparkSesson created is done...")
+    print("... SparkSesson created is done ...")
 
     # Create parquet files from I94 Description Labels.    
     create_parquet_label(path_raw_data)
     print(' ')
-    print('***** Make i94 labels files is done')
-    print(' ')
-    print(10*'#',5*' ', 'READING FILES AND CREATING DATAFRAME', 5*' ', 10*'#' )
+    print('... Make i94 labels files is done ...')
 
 
     # read files and create dataframes
@@ -196,6 +208,7 @@ def main():
     
     i94_mode, i94_ctry, i94_addr, i94_visa, i94_port = read_labels_to_df(input_data)
     print('***** All Dataframe are ready!')
+    print(' ')
 
 
 
