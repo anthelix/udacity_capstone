@@ -36,6 +36,7 @@ def get_credentials():
         os.environ['AWS_SECRET_ACCESS_KEY'] = config['AWS']['SECRET']
     except Exception as e:
         print("Unexpected error: %s" % e)
+        sys.exit()
 
 
 def create_spark_session():
@@ -53,7 +54,8 @@ def create_spark_session():
             .getOrCreate()
         return(spark)
     except Exception as e:
-        print("Unexpected error: %s" % e)
+        print("Unexpected error in create_spark_session(): %s" % e)
+        sys.exit()
 
 
 def create_parquet_label(path_raw_data):
@@ -86,7 +88,8 @@ def create_parquet_label(path_raw_data):
         print(f'There are {nb} rows in {key}.parquet')
         return
     except Exception as e:
-        print("Unexpected error: %s" % e)
+        print("Unexpected error in create_parquet_label(): %s" % e)
+        sys.exit()
 
 def read_sas_csv(path_raw_data, spark):
     """
@@ -163,7 +166,8 @@ def read_sas_csv(path_raw_data, spark):
         df_indicator_dev  = read_csv(spark, path_raw_data, file, cols, delimiter)
         return(df_immigration, df_temperature, df_airport_code, df_global_airports, df_iso_country, df_demograph, df_indicator_dev)
     except Exception as e:
-        print("Unexpected error: %s" % e)
+        print("Unexpected error in read_sas_csv: %s" % e)
+        sys.exit()
 
 
 def main():
@@ -242,7 +246,7 @@ def main():
     print('Done!')
     print(" ")
     print('***** create fact_immigration is processing...')
-    fact_immigration = create_fact_immigration_table(df_clean_immigration, dim_airport_us, dim_country, dim_demography, dim_indicator, output_parquet)
+    fact_immigration = create_fact_immigration_table(df_clean_immigration, output_parquet)
     print('Done!')
     print(" ")
 

@@ -2,6 +2,7 @@
 from pyspark.sql import functions as F
 from pyspark.sql import types as T
 from pyspark.sql.functions import monotonically_increasing_id
+import sys
 
 def write_parquet(table, parquet_path):
     """
@@ -34,13 +35,14 @@ def create_usairport_table(df_clean_airport_code, df_clean_global_airports, outp
                         .dropDuplicates(['iata_code'])
         dim_airport_us.printSchema()
         print(dim_airport_us.count())
-        dim_airport_us.show(2)
         dim_airport_us.collect()
         parquet_path = output_parquet + 'usairport_table'
+        dim_airport_us.limit(5).toPandas().to_csv(output_parquet+"usairport_table.csv", header=True)
         write_parquet(dim_airport_us, parquet_path)
         return(dim_airport_us)
     except Exception as e:
         print("Unexpected error: %s" % e)
+        sys.exit()
 
 def create_country_table(df_clean_iso_country, df_clean_temperature, output_parquet):
     """
@@ -57,13 +59,15 @@ def create_country_table(df_clean_iso_country, df_clean_temperature, output_parq
                             .orderBy('country_name') \
                             .drop('country')
         dim_country.printSchema()
-        dim_country.show(5)
+        dim_country.show(2)
         dim_country.collect()
+        dim_country.limit(5).toPandas().to_csv(output_parquet+"country_table.csv", header=True)
         parquet_path = output_parquet + 'country_table'
         write_parquet(dim_country, parquet_path)
         return(dim_country)
     except Exception as e:
         print("Unexpected error: %s" % e)
+        sys.exit()
 
 def create_indicator_table(df_clean_indicator_dev, output_parquet):
     """
@@ -77,13 +81,15 @@ def create_indicator_table(df_clean_indicator_dev, output_parquet):
                     .orderBy('country_name') \
                     .select('country_code', 'indicator_group', 'avg_2015' )
         dim_indicator.printSchema()
-        dim_indicator.show()
+        dim_indicator.show(2)
         dim_indicator.collect()
+        dim_indicator.limit(5).toPandas().to_csv(output_parquet+"indicator_table.csv", header=True)
         parquet_path = output_parquet + 'indicator_table'
         write_parquet(dim_indicator, parquet_path)
         return( dim_indicator)
     except Exception as e:
         print("Unexpected error: %s" % e)
+        sys.exit()
 
 def create_demography_table(df_clean_demograph, output_parquet):
     # create demography table per ethnic per state
@@ -96,15 +102,18 @@ def create_demography_table(df_clean_demograph, output_parquet):
 
         dim_demography.printSchema()
         #print(dim_airport_us.count())
-        dim_demography.show(5)
+        dim_demography.show(2)
         dim_demography.collect()
+        dim_demography.limit(5).toPandas().to_csv(output_parquet+"demograph_table.csv", header=True)
         parquet_path = output_parquet + 'demograph_table'
         write_parquet(dim_demography, parquet_path)
+        
         return(dim_demography)
     except Exception as e:
         print("Unexpected error: %s" % e)
+        sys.exit()
 
-def create_fact_immigration_table( df_clean_immigration, dim_airport_us, dim_country, dim_demography, dim_indicator, output_parquet ):  
+def create_fact_immigration_table(df_clean_immigration, output_parquet ):  
     """
     create facts tables
     """
@@ -112,11 +121,12 @@ def create_fact_immigration_table( df_clean_immigration, dim_airport_us, dim_cou
         fact_student = df_clean_immigration.alias('fact')
 
         fact_student.printSchema()
-        fact_student.show(5)
         fact_student.count()
+        fact_student.limit(5).toPandas().to_csv(output_parquet+"fact_immigration.csv", header=True)
         fact_student.collect()
         parquet_path = output_parquet + 'fact_immigration'
         write_parquet(fact_student, parquet_path)
         return(fact_student)
     except Exception as e:
         print("Unexpected error: %s" % e)
+        sys.exit()

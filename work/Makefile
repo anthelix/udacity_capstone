@@ -19,8 +19,15 @@ re:
 		rm -r ${INDIR}; \
 	fi \
 
-	@mkdir ../output
-	@mkdir ../input
+	@mkdir ${OUTDIR}
+	@mkdir ${INDIR}
+
+clean:
+	@if [ -d "${OUTDIR}" ]; then \
+		rm -r ${OUTDIR}; \
+	fi; \
+
+	@mkdir ${OUTDIR}
 
 
 

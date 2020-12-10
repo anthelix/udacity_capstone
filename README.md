@@ -125,9 +125,9 @@ Without Docker:
   * Go to the `./work` directory
   * for local development, install Python packages: `python3 -m pip install -r requirements.txt`
   * Run Anaconda, then Jupyter Notebook
-  * From the Jupyter terminal, run the install script: `Make install` == > sh bootstrap_jupyter.sh (in jupyter Home , at the right, click button `new`, then `terminal`)
-  * Then `Make etl
-  * `Make re` clean the folder and delete folders `input` and `output`
+  * From the Jupyter terminal,in the folder `./work`, run the install script : `Make install` == > sh bootstrap_jupyter.sh (in jupyter Home , at the right, click button `new`, then `terminal`)
+  * Then `Make etl`
+  * `Make re` clean the folder and delete folders `input` and `output` and re-create the same folderbut empty. I 
 
 ## ETL process
 
@@ -244,7 +244,7 @@ In this project, the data is transforming, cleansing, staging and load into a da
 * [Create dimensions and fact tables](./work/notebook/process_tables.py)
 * Answer to the questions
 
-I use Python, PySpark, Docker, Amazon S3. 
+I use Python, PySpark, Docker 
 
 ### **Describe and Gather Data**
 
@@ -534,9 +534,12 @@ In the first one, the exploration was done with Python and an extract from I94. 
 On the basis of a star schema, this allows to quickly find the elements linked to each other.It consists of a large fact table and a circle of other tables that contain the descriptive elements of the fact, called "dimensions". Table fact contaiins observable data (the facts) that we have on a subject and that we want to study, according axes of analysis (the dimensions).
 The immigration dataset is the center of this project and allow us to explore foreign visitors. It will the fact table. Dimension tables give us information about a piece of this visitors, country, airport, indicator economics, and us demography. 
 
+[](./doc/dend_schema.png)
+
+
 ---
 3.2 Mapping out data pipeline
-# TODO : add schema of table nullable and unique
+ TODO : add schema of table nullable and unique ras le 10/12
 # TODO: Revoir la fact table? nettoyage? remplacement des missing value, format?
 TODO: les scripts clean doivent lire depuis le datalake, depuis input, RAS le 9/12
 # TODO: regarder dans project 4 ou 3, script pour S3 et Redshift, et donc revoir la structure du dossier? est ce que je le fais avec docker?

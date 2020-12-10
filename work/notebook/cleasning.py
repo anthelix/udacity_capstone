@@ -32,6 +32,7 @@ def clean_immigration(spark, input_data):
         #read files
         i94_port = pd.read_parquet(input_data+'i94port.parquet')
         i94_visa = pd.read_parquet(input_data+'i94visa.parquet')
+        i94_mode = pd.read_parquet(input_data+'i94mode.parquet')
         df_immigration = spark.read.option("header","true").option("recursiveFileLookup","true").parquet(input_data+'i94_apr16')
         # create dictionnary from i94_port
         port_state_dic = dict([(i,a) for i, a in zip(i94_port.Port_id, i94_port.State_id)])
