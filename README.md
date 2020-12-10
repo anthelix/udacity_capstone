@@ -540,9 +540,9 @@ The immigration dataset is the center of this project and allow us to explore fo
 ---
 3.2 Mapping out data pipeline
  TODO : add schema of table nullable and unique ras le 10/12
-# TODO: Revoir la fact table? nettoyage? remplacement des missing value, format?
+ TODO: Revoir la fact table? nettoyage? remplacement des missing value, format? ras le 10/12
 TODO: les scripts clean doivent lire depuis le datalake, depuis input, RAS le 9/12
-# TODO: regarder dans project 4 ou 3, script pour S3 et Redshift, et donc revoir la structure du dossier? est ce que je le fais avec docker?
+ TODO: regarder dans project 4 ou 3, script pour S3 et Redshift, et donc revoir la structure du dossier? est ce que je le fais avec docker? later ... must send the project
 
 ```
 ***** create fact_student is processing...
