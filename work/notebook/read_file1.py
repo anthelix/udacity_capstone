@@ -42,7 +42,27 @@ def read_sas(spark, path, file, cols):
     #df.show(3, truncate = False)
     parquet_path = output_parquet + key
     write_parquet(df, parquet_path)
+    # check data
+    check = spark.read.parquet(parquet_path).select("cicid")
+    nb_check = check.count()
+    try:
+        if nb_check == nb_rows:
+            print(f" CHECK {parquet_path} SUCESS")
+        else:
+            print(f" CHECK {parquet_path} FAILLLLL")
+            print(f" WITH {nb_rows} IN DATAFRAME ")
+            print(f" AND {nb_check} AFTER LOADING FILE")
+            sys.exit()
+    except Exception as e:
+        print(f"{parquet_path}")
+        print("Unexpected error in check : %s" % e)
+        sys.exit()
     return df
+
+
+    
+    
+
 
 def read_csv(spark, path, file, cols, delimiter):
     """
@@ -72,6 +92,22 @@ def read_csv(spark, path, file, cols, delimiter):
     renamed_cols = [canonical(c) for c in df.columns]
     df = df.toDF(*renamed_cols)
     write_parquet(df, parquet_path)
+    # check data
+    check = spark.read.parquet(parquet_path)
+    nb_check = check.count()
+
+    try:
+        if nb_check == nb_rows:
+            print(f" CHECK {parquet_path} SUCESS")
+        else:
+            print(f" CHECK {parquet_path} FAILLLLL")
+            print(f" WITH {nb_rows} IN DATAFRAME ")
+            print(f" AND {nb_check} AFTER LOADING FILE")
+            sys.exit()
+    except Exception as e:
+        print(f"{parquet_path}")
+        print("Unexpected error in check : %s" % e)
+        sys.exit()
     return df
 
 def read_csv_global_airports(spark, path, file, cols, delimiter,schema, header):
@@ -81,7 +117,7 @@ def read_csv_global_airports(spark, path, file, cols, delimiter,schema, header):
     """
     output_csv = '../input/'
     key = file.split('.')[0]
-
+    
     print(" ")
     print(f"...Process the file :   {path}{file}.")
     
@@ -101,7 +137,26 @@ def read_csv_global_airports(spark, path, file, cols, delimiter,schema, header):
     #df.printSchema()          
     #print(f'*****              Display few rows')
     #df.show(3, truncate = False)
-    df.toPandas().to_csv(f'{output_csv}{key}.csv')
+    path_file = output_csv + key + ".csv"
+    df.toPandas().to_csv(path_file)
+    # check data
+    check = spark.read.csv(f'{output_csv}{key}.csv')
+    nb_check = check.count()
+        
+    if key == 'airports-extended':
+        nb_rows +=1
+    try:
+        if nb_check == nb_rows:
+            print(f" CHECK {path_file} SUCESS")
+        else:
+            print(f" CHECK {path_file} FAILLLLL")
+            print(f" WITH {nb_rows} IN DATAFRAME ")
+            print(f" AND {nb_check} AFTER LOADING FILE")
+            sys.exit()
+    except Exception as e:
+        print(f"{path_file}")
+        print("Unexpected error in check : %s" % e)
+        sys.exit()
     return df
 
 def read_csv_iso_country(spark, path, file):
@@ -136,6 +191,21 @@ def read_csv_iso_country(spark, path, file):
     #print(f'*****              Display few rows')
     #df.show(3, truncate = False)
     df.toPandas().to_csv(f'{output_csv}{key}.csv')
+    check = spark.read.csv(f'{output_csv}{key}.csv')
+    nb_check = check.count()
+    path_file = output_csv + key + ".csv"
+    try:
+        if nb_check == nb_rows:
+            print(f" CHECK {path_file} SUCESS")
+        else:
+            print(f" CHECK {path_file} FAILLLLL")
+            print(f" WITH {nb_rows} IN DATAFRAME ")
+            print(f" AND {nb_check} AFTER LOADING FILE")
+            sys.exit()
+    except Exception as e:
+        print(f"{path_file}")
+        print("Unexpected error in check : %s" % e)
+        sys.exit()
     return df
 
 def read_labels_to_df(input_data):

@@ -557,7 +557,10 @@ The immigration dataset is the center of this project and allow us to explore fo
 * dim_airport_us : Informations about the us aiport, code Iata, name, state
 * fact_immigration : Details about people entering in US
   
-4.2 
+4.2 Data QUality checks
+* script stop if one of the functions of `etl.py` and `process_tables.py` fails
+* In read_files1.py, count rows before write files, open the news files, count rows and compare. if bad check, the script stops.
+* # TODO: write a check null values in outputfiles. 
 
 
 ## Step 5: Complete Project write up

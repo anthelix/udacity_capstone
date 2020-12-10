@@ -70,7 +70,8 @@ def parse_file(path_raw_data, file, key):
             df.sort_values(df.columns[0], inplace=True)
         #with io.open(f"../../data/{key}.csv", "w") as f:
         #    df.to_csv(f, index=False)
-        df.to_parquet(f'{output_parquet}{key}.parquet')
-        
+        df.to_parquet(f'{output_parquet}{key}.parquet')     
         
     return(len(sas_dict[key]))
+
+ 
