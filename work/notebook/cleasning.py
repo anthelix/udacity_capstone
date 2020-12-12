@@ -108,7 +108,7 @@ def clean_immigration(spark, input_data):
 
         print('***** Make df_immigration_clean processing ')
         df_immigration_clean.printSchema()
-        df_immigration_clean.show(2)        
+        #df_immigration_clean.show(2)        
     except Exception as e:
         print("Unexpected error: %s" % e)
     else:
@@ -134,7 +134,7 @@ def clean_temperature(spark, input_data):
         df_clean_temperature = newdf.orderBy('country')
         print('***** Make df_clean_temperature processing ')
         df_clean_temperature.printSchema()
-        df_clean_temperature.show(2)
+        #df_clean_temperature.show(2)
     except Exception as e:
         print("Unexpected error: %s" % e)
     else:
@@ -173,7 +173,7 @@ def  clean_airport_code(spark, input_data):
                             .withColumnRenamed("myisoregion", "state_id"))
         print('***** Make df_clean_airport_code processing ')
         df_clean_airport_code.printSchema()
-        df_clean_airport_code.show(2)
+        #df_clean_airport_code.show(2)
     except Exception as e:
         print("Unexpected error: %s" % e)
     else:
@@ -199,7 +199,7 @@ def clean_global_airports(spark, input_data):
                                         .fillna("unknown", subset=['city_name',"iata_code"])  
         print('***** Make df_clean_global_airports processing ')
         df_clean_global_airports.printSchema()
-        df_clean_global_airports.show(2)
+        #df_clean_global_airports.show(2)
     except Exception as e:
         print("Unexpected error: %s" % e)
     else:
@@ -226,7 +226,7 @@ def clean_iso_country(spark, input_data):
                                     .dropDuplicates()
         print('***** Make df_clean_iso_country processing ')
         df_clean_iso_country.printSchema()
-        df_clean_iso_country.show(2)
+        #df_clean_iso_country.show(2)
     except Exception as e:
         print("Unexpected error: %s" % e)
     else:
@@ -258,7 +258,7 @@ def clean_demograph(spark, input_data):
                                 .fillna(-1, subset=['male_population','female_population'])
         print('***** Make df_clean_demograph processing ')
         df_clean_demograph.printSchema()
-        df_clean_demograph.show(2)
+        #df_clean_demograph.show(2)
     except Exception as e:
         print("Unexpected error: %s" % e)
     else:
@@ -311,7 +311,7 @@ def clean_indicator_dev(spark, input_data):
                             F.round(F.col('avg(indic_2015)'), 2).alias('avg_2015'))
         print('***** Make df_clean_indicator_dev processing ')
         df_clean_indicator_dev.printSchema()
-        df_clean_indicator_dev.show(2)
+        #df_clean_indicator_dev.show(2)
     except Exception as e:
         print("Unexpected error: %s" % e)
     else:

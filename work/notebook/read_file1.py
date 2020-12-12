@@ -11,13 +11,6 @@ from process_tables import write_parquet
 # invalid characters in parquet column names are replaced by _
 def canonical(x): return re.sub("[ ,;{}()\n\t=]+", '_', x.lower())
 
-def set_df_columns_nullable(spark, df, column_list, nullable=False):
-    for struct_field in df.schema:
-        if struct_field.name in column_list:
-            struct_field.nullable = nullable
-    df_mod = spark.createDataFrame(df.rdd, df.schema)
-    return df_mod
-
 def read_sas(spark, path, file, cols):
     """
     read file from '18-83510-I94-Data-2016/i94_apr16_sub.sas7bdat'
@@ -26,20 +19,19 @@ def read_sas(spark, path, file, cols):
     output_parquet = '../input/'
     key = 'i94_apr16'
     print(" ")
-    print(f"...Process the file :   {path}{file}.")
+    print(f"...Load the file :   {path}{file}.")
     df = spark.read \
         .format('com.github.saurfang.sas.spark') \
         .option('header', 'true') \
         .load(path+file) \
         .select(cols)
-    set_df_columns_nullable(spark,df,['cicid'])
     nb_rows = df.count()
     print(" ")
     #print(f'*****         Loading {nb_rows} rows')
     #print(f'*****         Display the Schema')
-    #df.printSchema()
+    df.printSchema()
     #print(f'*****         Display few rows')
-    #df.show(3, truncate = False)
+    df.show(3, truncate = False)
     parquet_path = output_parquet + key
     write_parquet(df, parquet_path)
     # check data
@@ -59,11 +51,6 @@ def read_sas(spark, path, file, cols):
         sys.exit()
     return df
 
-
-    
-    
-
-
 def read_csv(spark, path, file, cols, delimiter):
     """
     read csv file, return a dataframe
@@ -72,7 +59,8 @@ def read_csv(spark, path, file, cols, delimiter):
     output_parquet = '../input/'
     key = file.split('.')[0]
     print(" ")
-    print(f"...Process the file :   {path}{file}.")
+    print("                                           read_csv")
+    print(f"...Load the file :   {path}{file}.")
     df = spark.read \
         .format("csv") \
         .option('header', 'true') \
@@ -85,9 +73,9 @@ def read_csv(spark, path, file, cols, delimiter):
     nb_rows = df.count()
     #print(f'*****         Loading {nb_rows} rows')
     #print(f'*****         Display the Schema')
-    #df.printSchema()
+    df.printSchema()
     #print(f'*****         Display few rows')
-    #df.show(3, truncate = False)
+    df.show(3, truncate = False)
     parquet_path = output_parquet + key
     renamed_cols = [canonical(c) for c in df.columns]
     df = df.toDF(*renamed_cols)
@@ -117,11 +105,9 @@ def read_csv_global_airports(spark, path, file, cols, delimiter,schema, header):
     """
     output_csv = '../input/'
     key = file.split('.')[0]
-    
+    print("                                           read_csv global airport")
     print(" ")
-    print(f"...Process the file :   {path}{file}.")
-    
-  
+    print(f"...Load the file :   {path}{file}.")  
     df = spark.read \
         .format("csv") \
         .option('header', header) \
@@ -130,21 +116,20 @@ def read_csv_global_airports(spark, path, file, cols, delimiter,schema, header):
         .schema(schema) \
         .load(path+file) \
         .select(cols)
-    set_df_columns_nullable(spark,df,['airport_iata'])
+    df.printSchema()    
+    
     nb_rows = df.count()
     #print(f'*****         Loading {nb_rows} rows')
     #print(f'*****              Display the Schema')
-    #df.printSchema()          
+    df.printSchema()          
     #print(f'*****              Display few rows')
-    #df.show(3, truncate = False)
+    df.show(3, truncate = False)
     path_file = output_csv + key + ".csv"
     df.toPandas().to_csv(path_file)
     # check data
     check = spark.read.csv(f'{output_csv}{key}.csv')
-    nb_check = check.count()
-        
-    if key == 'airports-extended':
-        nb_rows +=1
+    nb_check = check.count()        
+    nb_rows +=1
     try:
         if nb_check == nb_rows:
             print(f" CHECK {path_file} SUCESS")
@@ -166,6 +151,7 @@ def read_csv_iso_country(spark, path, file):
     """
     output_csv = '../input/'
     key = file.split('.')[0]
+    print("                                           read_csv_iso_country")
     print(" ")
     print(f"...Process the file :   {path}{file}.")
 
@@ -176,8 +162,7 @@ def read_csv_iso_country(spark, path, file):
         .option('header', 'true') \
         .option('inferSchema', 'true') \
         .load(path+file) 
-    set_df_columns_nullable(spark,df,['English short name lower case'])
-    #df.show(3, truncate = False)
+    df.show(3, truncate = False)
     
     df = df.withColumnRenamed("English short name lower case", "Country")\
            .withColumnRenamed("Alpha-2 code", "Alpha_2")\
@@ -185,9 +170,10 @@ def read_csv_iso_country(spark, path, file):
            .withColumnRenamed("Numeric code", "Num_code")
     
     nb_rows = df.count()
+    nb_rows +=1
     #print(f'*****         Loading {nb_rows} rows')
     #print(f'*****              Display the Schema')
-    #df.printSchema()          
+    df.printSchema()          
     #print(f'*****              Display few rows')
     #df.show(3, truncate = False)
     df.toPandas().to_csv(f'{output_csv}{key}.csv')

@@ -200,18 +200,18 @@ def main():
     # Create parquet files from I94 Description Labels.    
     create_parquet_label(path_raw_data)
     print(' ')
-    print('... Make i94 labels files is done ...')
+    print('... Create i94 labels files is done ...')
+    print(' ')
 
 
     # read files and create dataframes
+    print("      ***** LOAD DATASET *****     ")
     df_immigration, df_temperature, df_airport_code, df_global_airports, df_iso_country, df_demograph, df_indicator_dev  = read_sas_csv(path_raw_data, spark)
     
     i94_mode, i94_ctry, i94_addr, i94_visa, i94_port = read_labels_to_df(input_data)
     print('***** All Dataframe are ready!')
     print(' ')
-
-
-
+    print("      ***** PROCESS CLEASNING *****     ")
     print(" ")
     # process df_immigration
     df_clean_immigration = clean_immigration(spark, input_data)
@@ -242,24 +242,27 @@ def main():
     print('df_clean_indicator_dev is done')
 
     # Create dimensions tables and fact table, saved in parquet files
+    print(" ")
+    print("      ***** CREATE DIMENSIONS ET FACT TABLES *****     ")
+    print(" ")
     print('***** create_usairport_table is processing...')
-    dim_airport_us = create_usairport_table(df_clean_airport_code, df_clean_global_airports, output_parquet)
+    dim_airport_us = create_usairport_table(spark, df_clean_airport_code, df_clean_global_airports, output_parquet)
     print('Done!')
     print(" ")
     print('***** create_country_table is processing...')
-    dim_country = create_country_table(df_clean_iso_country, df_clean_temperature, output_parquet)
+    dim_country = create_country_table(spark, df_clean_iso_country, df_clean_temperature, output_parquet)
     print('Done!')
     print(" ")
     print('***** create_indicator_table is processing...')
-    dim_indicator = create_indicator_table(df_clean_indicator_dev, output_parquet)
+    dim_indicator = create_indicator_table(spark,df_clean_indicator_dev, output_parquet)
     print('Done!')
     print(" ")
     print('***** create_demography_table is processing...')
-    dim_demography = create_demography_table(df_clean_demograph, output_parquet)
+    dim_demography = create_demography_table(spark,df_clean_demograph, output_parquet)
     print('Done!')
     print(" ")
     print('***** create fact_immigration is processing...')
-    fact_immigration = create_fact_immigration_table(df_clean_immigration, output_parquet)
+    fact_immigration = create_fact_immigration_table(spark, df_clean_immigration, output_parquet)
     print('Done!')
     print(" ")
 

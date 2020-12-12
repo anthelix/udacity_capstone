@@ -2,10 +2,9 @@ OUTDIR = ../output
 INDIR = ../input
 
 
-install:
+install: re
 	@sh bootstrap_jupyter.sh
-	@mkdir ../output
-	@mkdir ../input
+
 
 etl:
 	@python3 ./notebook/etl.py
@@ -28,6 +27,7 @@ clean:
 	fi; \
 
 	@mkdir ${OUTDIR}
+	@python3 ./notebook/etl_clean.py
 
 
 
