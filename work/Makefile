@@ -29,6 +29,7 @@ clean:
 	@mkdir ${OUTDIR}
 	@python3 ./notebook/etl_clean.py
 
-
+html:
+	@python3 ./notebook/convertJupyterToHtml.py
 
 	
