@@ -13,7 +13,7 @@ Where are they from?
 It's provide some indicators about their origin countries and the arrival state.
 
 
-I'll look at the `[US National Tourism and Trade Office](https://travel.trade.gov/research/reports/i94/historical/2016.html)` along with various immigration and other information about arriving person. I-94 Website is the Official Site for Travelers Visisting the United States. An I-94 form is needed by all Air and Sea travelers. 
+I'll look at the [US National Tourism and Trade Office](https://travel.trade.gov/research/reports/i94/historical/2016.html) along with various immigration and other information about arriving person. I-94 Website is the Official Site for Travelers Visisting the United States. An I-94 form is needed by all Air and Sea travelers. 
 The GDELT Project, [here](https://www.gdeltproject.org/), monitors the news around our world. 
 These will form the base of my project. I need to add more information. 
 
@@ -237,7 +237,7 @@ what are the student profils (age, country born, country indicators)?
 
 
 In this project, the data is transforming, cleansing, staging and load into a datawarehouse.
-* [Take a look to the dataset](./work/notebook/0_Take_a_look_dataset.ipynb)
+* Take a look to the dataset [notebook](./work/notebook/0_Take_a_look_dataset.ipynb) or [html](./documentation/0_Take_a_look_dataset.html)
 * [Exploration with Python](./work/notebook/1_Exploration_python.ipynb)
 * [Load raw data and saved in staging files](./work/notebook/read_file1.py)
 * [Data cleansing](./work/notebook/cleasning.py)
