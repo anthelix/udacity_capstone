@@ -560,13 +560,38 @@ The immigration dataset is the center of this project and allow us to explore fo
 4.2 Data QUality checks
 * script stop if one of the functions of `etl.py` and `process_tables.py` fails
 * In read_files1.py, count rows before write files, open the news files, count rows and compare. if bad check, the script stops.
-* # TODO: write a check null values in outputfiles. 
 
+4.3 Data dictionary
+* [here the data_dictionnary](./work/notebook/2_Data_dictionnary.ipynb)
 
 ## Step 5: Complete Project write up
 
+I use spark, locally with all the core available on the system in a Docker container. Pandas and Python is used to analyse the data. There all all necessary librairies to process the data and create the database tables.
 
- TODO : add schema of table nullable and unique ras le 10/12
- TODO: Revoir la fact table? nettoyage? remplacement des missing value, format? ras le 10/12
-TODO: les scripts clean doivent lire depuis le datalake, depuis input, RAS le 9/12
- TODO: regarder dans project 4 ou 3, script pour S3 et Redshift, et donc revoir la structure du dossier? est ce que je le fais avec docker? later ... must send the project
+The data set is one month of the I94 immigration. Local storage was used to store, read, write output. Input data can be stored on AWS S3, and the output write, parquets files, too. 
+
+As the file is updated monthly, ETL script could be run every month when the new I94 immigration file is available. 
+
+
+
+
+If I had 100x times the Go I would have to set up a real Spark cluster like with AWS EMR.
+
+Also this data set is a one time file, but in a real case with data that would come every day from report I would setup a daily workflow with AirFlow and split all the logic included in this notebook in several task in a @daily DAG.
+
+A real Hadoop cluster with Spark SQL on top would be also a good fit if 100 persons in a company had to work with the data since it would scale automatically depending of the CPU consumption.
+
+* If thhe data was increased by 100x:
+  * Input data (unzipped) should be stored in AWS S3 or an other cloud storage. 
+  * During the ETL, data should be stored in AWS redshift, and AWS EMR to process parallel data. 
+  * Output data should be stored in aws S3 for further analysis.
+* If the data populates a dashboard that must be updated on a daily basis by 7am every day.
+  * The script should be run every morning at 0:01 am, may be setup a CRON task. It could be compare the inpout and process the new data and not the whole data se, 
+  * Or it should be useful to setup Apache Airflow. 
+* The database needed to be accessed by 100+ people.
+  * Output data should be stored in AWS RDS to make it available for users.
+
+Summary
+
+This project provides an ETL script  to automatically process, clean, analyze US I94 Immigration data to analyse the income of foreign students. 
+
