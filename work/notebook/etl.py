@@ -206,13 +206,9 @@ def main():
 
     # read files and create dataframes
     print("      ***** LOAD DATASET *****     ")
-    df_immigration, df_temperature, df_airport_code, df_global_airports, df_iso_country, df_demograph, df_indicator_dev  = read_sas_csv(path_raw_data, spark)
-    
+    read_sas_csv(path_raw_data, spark)    
     i94_mode, i94_ctry, i94_addr, i94_visa, i94_port = read_labels_to_df(input_data)
-    print('***** All Dataframe are ready!')
-    print(' ')
-    print("      ***** PROCESS CLEASNING *****     ")
-    print(" ")
+
     # process df_immigration
     df_clean_immigration = clean_immigration(spark, input_data)
     print('df_immigration_clean is done')
@@ -240,6 +236,11 @@ def main():
     # process df_indicator_dev
     df_clean_indicator_dev = clean_indicator_dev(spark, input_data)
     print('df_clean_indicator_dev is done')
+    
+    print('***** All Dataframe are ready!')
+    print(' ')
+    print("      ***** PROCESS CLEASNING *****     ")
+    print(" ")
 
     # Create dimensions tables and fact table, saved in parquet files
     print(" ")

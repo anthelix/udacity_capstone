@@ -29,7 +29,7 @@ def read_sas(spark, path, file, cols):
     print(" ")
     #print(f'*****         Loading {nb_rows} rows')
     #print(f'*****         Display the Schema')
-    df.printSchema()
+    #df.printSchema()
     #print(f'*****         Display few rows')
     df.show(3, truncate = False)
     parquet_path = output_parquet + key
@@ -73,7 +73,7 @@ def read_csv(spark, path, file, cols, delimiter):
     nb_rows = df.count()
     #print(f'*****         Loading {nb_rows} rows')
     #print(f'*****         Display the Schema')
-    df.printSchema()
+    #df.printSchema()
     #print(f'*****         Display few rows')
     df.show(3, truncate = False)
     parquet_path = output_parquet + key
@@ -121,7 +121,7 @@ def read_csv_global_airports(spark, path, file, cols, delimiter,schema, header):
     nb_rows = df.count()
     #print(f'*****         Loading {nb_rows} rows')
     #print(f'*****              Display the Schema')
-    df.printSchema()          
+    #df.printSchema()          
     #print(f'*****              Display few rows')
     df.show(3, truncate = False)
     path_file = output_csv + key + ".csv"
@@ -173,7 +173,7 @@ def read_csv_iso_country(spark, path, file):
     nb_rows +=1
     #print(f'*****         Loading {nb_rows} rows')
     #print(f'*****              Display the Schema')
-    df.printSchema()          
+    #df.printSchema()          
     #print(f'*****              Display few rows')
     #df.show(3, truncate = False)
     df.toPandas().to_csv(f'{output_csv}{key}.csv')

@@ -72,6 +72,6 @@ def parse_file(path_raw_data, file, key):
         #    df.to_csv(f, index=False)
         df.to_parquet(f'{output_parquet}{key}.parquet')     
         
-    return(len(sas_dict[key]))
+    return()
 
  

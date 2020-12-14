@@ -72,12 +72,33 @@ tree -CAL 2
 ├── docker_nbextensions  
 │   ├── Dockerfile  
 │   └── docker.txt  
-├── output  
-│   ├── country.parquet  
-│   ├── demograph.parquet  
-│   ├── fact_student.parquet  
-│   ├── indicator.parquet  
-│   ├── us_airport.parquet  
+├── documentation
+│   ├── 0_Take_a_look_dataset.html
+│   ├── 1_Exploration_python.html
+│   ├── 2_Data_dictionnary.html
+│   ├── 3_Explanation_capstone_project.html
+│   ├── 4_Create_etl_work_process.html
+│   ├── 5_create_etl_workinCopy.html
+│   ├── dend_schema.png
+├── input
+│   ├── airport-codes_csv
+│   ├── airports-extended.csv
+│   ├── GlobalLandTemperaturesByCity
+│   ├── i94addr.parquet
+│   ├── i94_apr16
+│   ├── i94cit_i94res.parquet
+│   ├── i94mode.parquet
+│   ├── i94port.parquet
+│   ├── i94visa.parquet
+│   ├── us-cities-demographics
+│   ├── WDIData
+│   └── wikipedia-iso-country-codes.csv
+├── output
+│   ├── country_table
+│   ├── demograph_table
+│   ├── fact_immigration
+│   ├── indicator_table
+│   └── usairport_table
 ├── README.md  
 ├── stack.yml  
 └── work  
@@ -90,8 +111,9 @@ tree -CAL 2
     │   ├── 2_Data_dictionnary.ipynb  
     │   ├── 3_Explanation_capstone_project.ipynb  
     │   ├── 4_Create_etl_work_process.ipynb  
-    │   ├── 5_create_etl_workinCopy.ipynb  
-    │   ├── etl.py  
+    │   ├── etl.py
+    │   ├── cleasning.py
+    │   ├── convertJupyterToHtml.py
     │   ├── parse_file1.py  
     │   ├── postgresql-42.2.10.jar  
     │   ├── process_tables.py  
@@ -215,11 +237,11 @@ Without Docker:
   </details>
 
 # Summary
-## [Step 1: Scope the Project and Gather Data](#step-1-scope-the-project-and-gather-data) 
-## [Step 2: Explore and Assess the Data](#step-2-explore-and-assess-the-data)
-## [Step 3: Define the Data Model](#step-3-define-the-data-model)
-## [Step 4: Run ETL to model the data](#step-4-run-etl-to-model-the-data)
-## [Step 5: Complete Project write up](#step-5-complete-project-write-up)
+#### [Step 1: Scope the Project and Gather Data](#step-1-scope-the-project-and-gather-data) 
+#### [Step 2: Explore and Assess the Data](#step-2-explore-and-assess-the-data)
+#### [Step 3: Define the Data Model](#step-3-define-the-data-model)
+#### [Step 4: Run ETL to model the data](#step-4-run-etl-to-model-the-data)
+#### [Step 5: Complete Project write up](#step-5-complete-project-write-up)
 
 ___
 </br>
@@ -237,18 +259,17 @@ what are the student profils (age, country born, country indicators)?
 
 
 In this project, the data is transforming, cleansing, staging and load into a datawarehouse.
-* Take a look to the dataset [notebook](./work/notebook/0_Take_a_look_dataset.ipynb) or [html](./documentation/0_Take_a_look_dataset.html)
+* [Take a look to the dataset](./work/notebook/0_Take_a_look_dataset.ipynb)
 * [Exploration with Python](./work/notebook/1_Exploration_python.ipynb)
 * [Load raw data and saved in staging files](./work/notebook/read_file1.py)
 * [Data cleansing](./work/notebook/cleasning.py)
 * [Create dimensions and fact tables](./work/notebook/process_tables.py)
-* Answer to the questions
 
 I use Python, PySpark, Docker 
 
 ### **Describe and Gather Data**
 
-[Data dictionnary](./2_Data_dictionnary.ipynb) provide informations about dataset and tables used.
+[Data dictionnary](./work/notebook/2_Data_dictionnary.ipynb) provide informations about dataset and tables used.
 
 #### **Data Source**
 
@@ -437,7 +458,7 @@ Column Name | Description | Example | Type
 ### **Explore the Data** 
 #### Data Source
 
-[Data dictionnary](2_data_dictionnary.ipynb) provides informations about dataset and tables used. [This notebook](1_Exploration_python.ipynb) performs a first exploration with Python and explain the datasets, which variables I kept. 
+[Data dictionnary](./work/notebook/2_Data_dictionnary.ipynb) provides informations about dataset and tables used. [This notebook](./work/notebook/1_Exploration_python.ipynb) performs a first exploration with Python and explain the datasets, which variables I kept. 
 
 Dataset |File |Data Source|Dataframe Name
 |-|-|-|-|
@@ -531,13 +552,13 @@ In the first one, the exploration was done with Python and an extract from I94. 
 ## **Step 3: Define the Data Model**
 3.1 Conceptual Data Model
 
-On the basis of a star schema, this allows to quickly find the elements linked to each other.It consists of a large fact table and other tables that contain the descriptive elements of the fact, called "dimensions". Table fact contaiins observable data (the facts) that we have on a subject and that we want to study, according axes of analysis (the dimensions).
+On the basis of a star schema, this allows to quickly find the elements linked to each other. It consists of a large fact table and other tables that contain the descriptive elements of the fact, called "dimensions". Table fact contaiins observable data (the facts) that we have on a subject and that we want to study, according axes of analysis (the dimensions).
 The immigration dataset is the center of this project and allow us to explore foreign visitors. It will the fact table. Dimension tables give us information about a piece of this visitors, country, airport, indicator economics, and us demography. 
-* fact_immigration comes from [I94 Immigration Data](./2_Data_dictionnary.ipynb#I94) and from [I94 labels](./2_Data_dictionnary.ipynb#labels)
-* dim_airport comes from [aiport-codes_csv.csv]() and [aiports-extended.csv]()
-* dim_country comes from [GlobalLandTemperaturesByCity.csv]() and [wikipedia-iso-country-codes.csv]()
-* dim_indicator comes from [WDIData.csv]()
-* dim_demography comes from [us-cities-demographics.csv]
+* fact_immigration comes from [I94 Immigration Data](./work/notebbok/2_Data_dictionnary.ipynb#I94) and from [I94 labels](.work/notebook/2_Data_dictionnary.ipynb#labels)
+* dim_airport comes from [aiport-codes_csv.csv](./work/notebbok/2_Data_dictionnary.ipynb#airportscode) and [aiports-extended.csv](./work/notebbok/2_Data_dictionnary.ipynb#globalairports)
+* dim_country comes from [GlobalLandTemperaturesByCity.csv](./work/notebbok/2_Data_dictionnary.ipynb#temperature) and [wikipedia-iso-country-codes.csv](./work/notebbok/2_Data_dictionnary.ipynb#isocountry)
+* dim_indicator comes from [WDIData.csv](./work/notebbok/2_Data_dictionnary.ipynb#indicators)
+* dim_demography comes from [us-cities-demographics.csv](./work/notebbok/2_Data_dictionnary.ipynb#uscities)
 
 [](./doc/dend_schema.png)
 
@@ -548,7 +569,7 @@ The immigration dataset is the center of this project and allow us to explore fo
 * Read the others files from `input`, clean them and store data in dataframes
 * Read the data from the dataframes and process the dimensions and fact tables, store them in parquet files in `ouput` folder. 
 * 
-## Step 4: Run ETL to model the data
+## **Step 4: Run ETL to model the data**
 
 4.1 Create the data model
 * dim_demography : Average people by ethnic by US state. 
@@ -564,22 +585,13 @@ The immigration dataset is the center of this project and allow us to explore fo
 4.3 Data dictionary
 * [here the data_dictionnary](./work/notebook/2_Data_dictionnary.ipynb)
 
-## Step 5: Complete Project write up
+## **Step 5: Complete Project write up**
 
 I use spark, locally with all the core available on the system in a Docker container. Pandas and Python is used to analyse the data. There all all necessary librairies to process the data and create the database tables.
 
 The data set is one month of the I94 immigration. Local storage was used to store, read, write output. Input data can be stored on AWS S3, and the output write, parquets files, too. 
 
 As the file is updated monthly, ETL script could be run every month when the new I94 immigration file is available. 
-
-
-
-
-If I had 100x times the Go I would have to set up a real Spark cluster like with AWS EMR.
-
-Also this data set is a one time file, but in a real case with data that would come every day from report I would setup a daily workflow with AirFlow and split all the logic included in this notebook in several task in a @daily DAG.
-
-A real Hadoop cluster with Spark SQL on top would be also a good fit if 100 persons in a company had to work with the data since it would scale automatically depending of the CPU consumption.
 
 * If thhe data was increased by 100x:
   * Input data (unzipped) should be stored in AWS S3 or an other cloud storage. 
@@ -591,7 +603,7 @@ A real Hadoop cluster with Spark SQL on top would be also a good fit if 100 pers
 * The database needed to be accessed by 100+ people.
   * Output data should be stored in AWS RDS to make it available for users.
 
-Summary
+# **Summary**
 
 This project provides an ETL script  to automatically process, clean, analyze US I94 Immigration data to analyse the income of foreign students. 
 
